@@ -1,0 +1,95 @@
+﻿@rendermode InteractiveAuto
+@inject NavigationManager navigationManager;
+
+@if (First)
+{
+    <div class="px-3 py-5 mx-3 d-flex flex-column gap-3 w-100 h-100 panel_bg_color">
+        <div class="d-flex justify-content-center mb-5">
+            <img src="./images/arrow.png" width="100" height="100" />
+        </div>
+        <p class="panel-title text-center"><b>Your Sub Criteria for @_name</b></p>
+        <div class="d-flex justify-content-center">
+            <input type="text" class="form-control w-50 @(_warnState ? "warn-border" : "")" placeholder="Criterion:(i.e Revenue, Cost, Life years, Quality of Life, Comfort, etc.)" @bind="_currentCriteria" @oninput="@(e => {_warnState = false; _currentCriteria = e.Value?.ToString() ?? string.Empty;})">
+        </div>
+        <div class="d-flex justify-content-center w-20 gap-2">
+            <button class="btn-primary py-3 px-4 mt-5 primary-button" @onclick='AddCriteria'>Proceed</button>
+            <button class="btn-primary py-3 px-4 mt-5 secondary-button" @onclick='() => Cancel?.Invoke()'>Cancel</button>
+        </div>
+    </div>
+}
+else
+{
+    @if (_step == 1)
+    {
+        <div class="px-3 py-5 d-flex flex-column gap-3 w-100 h-100 panel_bg_color">
+            <div class="d-flex justify-content-center mb-5 mt-4">
+                <img src="./images/add.png" width="100" height="100" />
+            </div>
+            <p class="text-center panel-title"><b>Do you want to add another sub-criterion for @_name?</b></p>
+            <div class="d-flex justify-content-center w-20 gap-4">
+                <button class="btn-primary py-3 px-5 mt-5 primary-button" @onclick='() => _step = 2'>Yes</button>
+                <button class="btn-primary py-3 px-5 mt-5 secondary-button" @onclick='() => Cancel?.Invoke()'>No</button>
+            </div>
+            <div class="form-check d-flex justify-content-center gap-2 checkbox-big">
+                <input class="form-check-input" name="never" id="name" type="checkbox">
+                <label class="primary-checkbox_color" for="never">Do not ask me about Sub Criteria for other items.</label>
+            </div>
+        </div>
+    }
+    else if (_step == 2)
+    {
+        <div class="border-1 px-3 py-5 mx-3 d-flex flex-column gap-3 w-100 h-100">
+            <div class="d-flex justify-content-center mb-5">
+                <img src="./images/arrow.png" width="100" height="100" />
+            </div>
+            <p class="page-title text-center"><b>Your Sub Criteria for @_name</b></p>
+            <div class="d-flex justify-content-center">
+                <input type="text" class="form-control w-50 @(_warnState ? "warn-border" : "")" placeholder="Criterion:(i.e Revenue, Cost, Life years, Quality of Life, Comfort, etc.)" @bind="_currentCriteria" @oninput="@(e => {_warnState = false; _currentCriteria = e.Value?.ToString() ?? string.Empty;})">
+            </div>
+            <div class="d-flex justify-content-center w-20 gap-2">
+                <button class="btn-primary py-3 px-4 mt-5 primary-button" @onclick='AddCriteria'>Proceed</button>
+                <button class="btn-primary py-3 px-4 mt-5 secondary-button" @onclick='() => Cancel?.Invoke()'>Cancel</button>
+            </div>
+        </div>
+    }
+
+}
+
+
+@code {
+    [Parameter]
+    public Action<string, string> Add { get; set; }
+    [Parameter]
+    public Action Cancel { get; set; }
+    [Parameter]
+    public string Id { get; set; }
+    [Parameter]
+    public string? Name{ get; set; }
+    [Parameter]
+    public bool First { get; set; }
+    [Parameter]
+    public int? StepP { get; set; }
+
+    private string _name = "";
+    private int _step = 1;
+   
+    protected override void OnInitialized()
+    {
+        _name = Name;
+        base.OnInitialized();
+    }
+   
+    private bool _warnState = false;
+   
+    private string _currentCriteria = "";
+  
+    private void AddCriteria()
+    {
+        if (_currentCriteria == "")
+        {
+            _warnState = true;
+            return;
+        }
+        Add?.Invoke(Id, _currentCriteria);
+    }
+}

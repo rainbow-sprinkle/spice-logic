@@ -1,0 +1,24 @@
+﻿@rendermode InteractiveAuto
+
+<div class="px-4 py-2 d-flex flex-row justify-content-between" style="font-size: 18px">
+    <div class="d-flex gap-1 align-items-center">
+        <div style="width: 20px; height: 20px; background-color: mediumvioletred"></div>
+        <div>@No</div>
+        <div class="ps-2">name</div>
+    </div>
+    <div role="button" class="d-flex gap-2 align-items-center" @onclick="() => ModalOpen?.Invoke()">
+        <div><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcStiSUEGXXsLUE7NxqbjVspHVxp_AgO8q9mxwV9MQtiVsK3fUFl" width="20" height="20"/></div>
+        <div class="font-10-color" style="text-decoration:underline">@(Value)</div>
+        <DynamicSmiley Width="48px" Happiness="@(100 - (int)(Value * 100.0))" FaceColor="lightgreen" StrokeColor="green" />
+    </div>
+</div>
+@code {
+    [Parameter]
+    public int No{ get; set; }
+    [Parameter]
+    public string Option { get; set; }
+    [Parameter]
+    public Action ModalOpen{ get; set; }
+    [Parameter]
+    public double Value{ get; set; }
+}

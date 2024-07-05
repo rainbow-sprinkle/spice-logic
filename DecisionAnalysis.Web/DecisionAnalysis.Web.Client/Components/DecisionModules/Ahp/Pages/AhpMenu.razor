@@ -1,0 +1,184 @@
+﻿@using DecisionAnalysis.Web.Client.Components.DecisionModules.Ahp.Pages.Layout
+@rendermode InteractiveAuto
+<div class="position-relative">
+    <ul class="nav nav-tabs menu-title ps-5 position-relative pt-1">
+        @if (Page == "home")
+        {
+            <li role="button" class="px-3 @(_selectIndex == 1 ? "active" : " ")"><span><a href="/group_decision">Group Decision</a></span></li>
+            <li role="button" class="px-3 @(_selectIndex == 2 ? "active" : " ")" @onclick="() => selectItem(2)"><span>Reporting</span></li>
+            <li role="button" class="px-3 @(_selectIndex == 3 ? "active" : " ")" @onclick="() => selectItem(3)"><span>Settings</span></li>
+            <li role="button" class="px-3 @(_selectIndex == 4 ? "active" : " ")" @onclick="() => selectItem(4)"><span>Help</span></li>
+        }
+        else if (Page == "add-another-criteria" || Page == "options" || Page == "group")
+        {
+            <li role="button" class="px-3 @(_selectIndex == 5 ? "active" : " ")" @onclick="() => selectItem(5)"><span>Methods</span></li>
+            <li role="button" class="px-3 @(_selectIndex == 1 ? "active" : " ")"><span><a href="/group_decision">Group Decision</a></span></li>
+            <li role="button" class="px-3 @(_selectIndex == 2 ? "active" : " ")" @onclick="() => selectItem(2)"><span>Reporting</span></li>
+            <li role="button" class="px-3 @(_selectIndex == 3 ? "active" : " ")" @onclick="() => selectItem(3)"><span>Settings</span></li>
+            <li role="button" class="px-3 @(_selectIndex == 4 ? "active" : " ")" @onclick="() => selectItem(4)"><span>Help</span></li>
+        }
+        else if (Page == "dashboard" || Page == "problem")
+        {
+            <li role="button" class="px-3 @(_selectIndex == 6 ? "active" : " ")" @onclick="() => selectItem(6)"><span>View</span></li>
+            <li role="button" class="px-3 @(_selectIndex == 5 ? "active" : " ")" @onclick="() => selectItem(5)"><span>Methods</span></li>
+            <li role="button" class="px-3 @(_selectIndex == 1 ? "active" : " ")"><span><a href="/group_decision">Group Decision</a></span></li>
+            <li role="button" class="px-3 @(_selectIndex == 2 ? "active" : " ")" @onclick="() => selectItem(2)"><span>Reporting</span></li>
+            <li role="button" class="px-3 @(_selectIndex == 3 ? "active" : " ")" @onclick="() => selectItem(3)"><span>Settings</span></li>
+            <li role="button" class="px-3 @(_selectIndex == 4 ? "active" : " ")" @onclick="() => selectItem(4)"><span>Help</span></li>
+        }
+        else if (Page == "members")
+        {
+            <li role="button" class="px-3 @(_selectIndex == 6 ? "active" : " ")" @onclick="() => selectItem(6)"><span>View</span></li>
+            <li role="button" class="px-3 @(_selectIndex == 1 ? "active" : " ")" @onclick="() => selectItem(1)"><span>Group Decision</span></li>
+            <li role="button" class="px-3 @(_selectIndex == 2 ? "active" : " ")" @onclick="() => selectItem(2)"><span>Reporting</span></li>
+            <li role="button" class="px-3 @(_selectIndex == 3 ? "active" : " ")" @onclick="() => selectItem(3)"><span>Settings</span></li>
+            <li role="button" class="px-3 @(_selectIndex == 4 ? "active" : " ")" @onclick="() => selectItem(4)"><span>Help</span></li>
+        }
+        <span class="@(_barState ? "d-none" : "d-block") position-absolute end-1 icon-small-size" role="button" style="top: 3px" @onclick="() => menuState()">
+            <i class="fa fa-solid fa-chevron-down"></i>
+        </span>
+        <span class="@(_barState == false ? "d-none" : "d-block") position-absolute end-1 icon-small-size" role="button" style="top: 3px" @onclick="() => menuState()">
+            <i class="fa fa-solid fa-chevron-up"></i>
+        </span>
+    </ul>
+    <span class="brand position-absolute bottom-0" role="button" @onclick="() => {_modalState = !_modalState;}"><img src="https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcQlLLrbHFPOiUGEyKbcOVthUyDjVSaUSrJo5egFjfAD4dfRFVK3" width="28" height="28" /></span>
+    @if(_modalState)
+    {
+        <div class="dropmenu pt-2 position-absolute left-0" style="top:26px;z-index:1001">
+            <div>
+                <div class="d-flex flex-row gap-1 p-1 dropmenu-item ps-2">
+                    <span><i class="fa fa-solid fa-file"></i></span>
+                    <span>New Project</span>
+                </div>
+                <div class="d-flex flex-row gap-1 p-1 dropmenu-item ps-2">
+                    <span><i class="fa fa-solid fa-folder-open"></i></span>
+                    <span>Open Project</span>
+                </div>
+                <div class="d-flex flex-row gap-1 p-1 dropmenu-item ps-2">
+                    <span><i class="fa fas fa-save"></i></span>
+                    <span>Save Project</span>
+                </div>
+                <div class="d-flex flex-row gap-1 p-1 dropmenu-item ps-2">
+                    <span><i class="fa fa-regular fa-image"></i></span>
+                    <span>Save Diagram Image</span>
+                </div>
+                <div class="d-flex flex-row gap-1 p-1 dropmenu-item ps-2">
+                    <span><i class="fa fas fa-window-close"></i></span>
+                    <span>Close Project</span>
+                </div>
+                <div class="d-flex flex-row gap-1 p-1 dropmenu-item ps-2">
+                    <span><i class="fa fa-solid fa-print"></i></span>
+                    <span>Print Preview</span>
+                </div>
+                <div class="d-flex flex-row gap-1 p-1 dropmenu-item ps-2">
+                    <span><i class="fa fa-solid fa-print"></i></span>
+                    <span>Print</span>
+                </div>
+                <div class="d-flex flex-row gap-1 p-1 dropmenu-item dropmenu-item-last ps-2">
+                    <span><i class="fa fa-solid fa-power-off"></i></span>
+                    <span>Exist</span>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<div class="@(_barState == false ? "d-none" : " ") font-10-color">
+    @switch (_selectIndex)
+    {
+        case 1:
+            <RibbonGroupDecision />
+            break;
+        case 2:
+            <RibbonReporting />
+            break;
+        case 3:
+            <AhpModal title="Settings" onClose="@onClose" onSubmit="@onSubmit">
+                <div class="py-4 px-4">
+                    <div class="form-group row align-items-center">
+                        <label for="sort" class="col-sm-2 control-label"> Language: </label>
+                        <div class="col-sm-10 w-1d3">
+                            <select class="form-select" id="sort">
+                                <option>English</option>
+                                <option>Korean</option>
+                                <option>German</option>
+                                <option>Spanish</option>
+                                <option>Franch</option>
+                                <option>Italian</option>
+                                <option>Polish</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mt-5 d-flex flex-column gap-3 font-10-color">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+                            <label class="form-check-label" for="flexCheckDefault">
+                                Check for update automatically when the application starts.
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="" id="AskChecked">
+                            <label class="form-check-label" for="AskChecked">
+                                Ask for confirmation before deleting anything.
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="" id="HelpCheckChecked">
+                            <label class="form-check-label" for="HelpCheckChecked">
+                                Help us to improve this software by providing diagnostics and crash reports.
+                            </label>
+                        </div>
+                    </div>
+                    <div class="mt-4 mb-2 d-flex justify-content-end" style="color: blue">
+                        Privacy Policy
+                    </div>
+                </div>
+            </AhpModal>
+            break;
+        case 4:
+            <RibbonHelp />
+            break;
+        case 5:
+            <RibbonMethod />
+            break;
+        case 6:
+            <RibbonView state='@(Page == "dashboard" ? 1 : Page == "members" ? 2 : 0)' />
+            break;
+    }
+</div>
+
+@code {
+    [Parameter]
+    public string Page { get; set; }
+
+    private bool _modalState = false;
+    private bool _barState = false;
+    private int _selectIndex = 0;
+    private void menuState()
+    {
+        _barState = !_barState;
+    }
+    private void onClose()
+    {
+        _selectIndex = 0;
+        _barState = false;
+    }
+    private void onSubmit()
+    {
+        _selectIndex = 0;
+        _barState = false;
+    }
+    private void selectItem(int index)
+    {
+        _modalState = false;
+        if (index == _selectIndex)
+        {
+            _barState = !_barState;
+            _selectIndex = 0;
+            return;
+        }
+
+        _barState = true;
+        _selectIndex = index;
+    }
+}

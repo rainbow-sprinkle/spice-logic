@@ -1,0 +1,23 @@
+﻿@page "/group_decision"
+@inject NavigationManager navigationManager;
+@rendermode InteractiveAuto
+
+<AhpMenu page="group" />
+<div class="border border-1 px-3 py-5 mx-3 d-flex flex-column gap-3 w-100 panel-inner-border-color" style="height: 100vh">
+    <div class="d-flex justify-content-center">
+        <img src="https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcTcTcm104eiO-G6BoRE4LhQFscTcJb8MScONDc444k5YpPMC27O" width="200" height="200" />
+    </div>
+    <div class="d-flex flex-column justify-content-center align-items-center mt-5 w-100">
+        <p class="font-10-color text-center w-50">This group decision-making panel will let you make a group decision where your team members can participate.</p>
+        <br />
+        <p class="font-10-color text-center w-50">Your team members can create and save their individual AHP projects in a network-shared location. You can aggregate those saved projects from this panel. Simply import the saved projects of each member and the aggregation will be done automatically</p>
+    </div>
+    <div class="d-flex justify-content-center w-20 gap-2">
+        <button class="btn-primary py-2 px-4 mt-5 secondary-button" @onclick='() => {navigationManager.NavigateTo("/members");}'>Import member project files</button>
+        <button class="btn-primary py-2 px-4 mt-5 secondary-button">Switch to individual decision mode</button>
+    </div>
+</div>
+
+@code {
+
+}

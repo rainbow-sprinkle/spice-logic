@@ -1,0 +1,23 @@
+﻿<div class="pe-1" style="width: 93%">
+    <div class="h-100 double-border border-start-0">
+        <div>
+            <div class="d-flex flex-row justify-content-between px-2 py-1 accordion_title" role="button" @onclick="() => {_sensitiveState = !_sensitiveState;}">
+                <span>Sensitive Variables(number)</span>
+                <span class="icon-small"><i class="fa fa-solid fa-chevron-up"></i></span>
+            </div>
+            @if (_sensitiveState)
+            {
+                <SensitiveItem OpenModal="OpenModal" />
+            }
+        </div>
+        <AhpChart Title="Priorities" Items="@Items" Values="@Values" type="circle" />
+    </div>
+</div>
+
+@code {
+    private bool _sensitiveState = true;
+    private List<string> Items = ["abc", "def", "ghi"];
+    private List<double> Values = [0.3, 1, 0.6];
+    [Parameter]
+    public Action? OpenModal { get; set; }
+}

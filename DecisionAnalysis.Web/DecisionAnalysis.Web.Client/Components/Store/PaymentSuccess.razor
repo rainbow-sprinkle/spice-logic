@@ -1,0 +1,57 @@
+﻿@page "/payment-success"
+@using BusinessDomain.BusinessLogic.Payment
+@using DecisionAnalysis.Web.Client.UiUtilities
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize]
+@rendermode InteractiveWebAssembly
+
+@inject NavigationManager NavigationManager
+@inject HttpClient HttpClient
+@inject IBlazorJsFacade JsFacade
+@inject ISiteUtils SiteUtils
+<h1>Thank You</h1>
+
+@if (_sessionDetails != null)
+{
+    <h1>Payment @_sessionDetails.PaymentStatus</h1>
+    <h2 class="my-3">Hi @_customerName,</h2>
+    <div class="m-5">
+        Amount: @_sessionDetails.AmountTotal @_sessionDetails.Currency
+    </div>
+}
+else
+{
+    <p class="m-5 fw-bold">Please wait while we process your order...</p>
+    <img src="icons/progress32.gif" alt=""/>
+}
+
+@code {
+
+    public const string PageUrl = "/payment-success";
+
+    [SupplyParameterFromQuery(Name = nameof(CheckoutSessionId))]
+    public string? CheckoutSessionId { get; set; }
+
+    private string _customerName = string.Empty;
+    PaymentSession? _sessionDetails;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (SiteUtils.IsWasmLoaded())
+        {
+            string baseUrl = NavigationManager.BaseUri.TrimEnd('/');
+            string apiUrl = $"{baseUrl}/api/payment/session-info?sessionId={CheckoutSessionId}";
+
+            _sessionDetails = await HttpClient.GetFromJsonAsync<PaymentSession>(apiUrl);
+            
+            if (_sessionDetails == null)
+            {
+                await JsFacade.ShowAlert("Could not parse the session details!");
+            }
+            else
+            {
+                _customerName = _sessionDetails.CustomerName;
+            }
+        }
+    }
+}

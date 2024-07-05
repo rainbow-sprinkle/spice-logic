@@ -1,0 +1,66 @@
+﻿
+<div class="dropdown">
+    <!-- <button onclick="myFunction()" class="dropbtn">Dropdown</button> -->
+    <input type="text" onclick="dropdownShow('@dropId')" class="myInput" id="@inputId" onkeyup="filterFunction('@inputId','@dropId')">
+    <div id="@dropId" class="dropdown-content">
+        @foreach(DropListData item in data)
+        {
+            <div class="dropdown-content-item general-color" data-name="@item.title" onclick="selectItem('@item.title','@inputId','@dropId')">
+                <div>@item.title</div>
+                <div>
+                    @item.content
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+    <script>
+        function filterFunction(inputId, dropId) {
+            alert(inputId)
+            var input = $('#' + inputId);
+            var filter = input.val().toUpperCase();
+            var div = $("#" + dropId);
+            var items = div.find(".dropdown-content-item");
+
+            items.each(function () {
+                var txtValue = $(this).data("name");
+                if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                    $(this).show();
+                } else {
+                    $(this).hide();
+                }
+            });
+        }
+
+        function selectItem(str,inputId,dropId) {
+            var input = $("#" + inputId);
+                input.attr("placeholder", str);
+
+                $("#" + dropId).removeClass("show");
+            }
+        function dropdownShow(dropId) {
+                $("#" + dropId).toggleClass("show");
+        }
+    </script>
+
+
+@code {
+    private string inputId;
+    private string dropId;
+    public class DropListData
+    {
+        public string title { get; set; }
+        public string content { get; set; }
+    }
+    [Parameter]
+    public DropListData[] data { get; set; }
+    [Parameter]
+    public string id { get; set; }
+
+    protected override void OnInitialized()
+    {
+        inputId = String.Format("input-{0}", id);
+        dropId = String.Format("drop-{0}", id);
+    }
+}

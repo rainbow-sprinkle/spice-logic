@@ -1,0 +1,35 @@
+﻿@using BusinessDomain.BusinessLogic.Payment
+@using BusinessDomain.Contracts
+@using System.Security.Claims
+@inject IPaymentProcessor PaymentProcessor
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+<div class="org-plans-container">
+   
+    <script async src="https://js.stripe.com/v3/pricing-table.js"></script>
+    <stripe-pricing-table pricing-table-id="@_pricingTableInfo?.PricingTableId"
+                          publishable-key="@_pricingTableInfo?.PublishableKey"
+                          customer-email="@_customerEmail"
+                          client-reference-id="@_clientReferenceId">
+    </stripe-pricing-table>
+  
+</div>
+
+@code {
+    PricingTableInfo? _pricingTableInfo;
+    string? _clientReferenceId;
+    string? _customerEmail;
+
+    protected override async Task OnInitializedAsync()
+    {
+        AuthenticationState authenticationState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+      
+        ClaimsPrincipal user = authenticationState.User;
+        
+        _customerEmail = user.Identity?.Name;
+
+        _clientReferenceId = user.FindFirst(c => c.Type == ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
+        
+        _pricingTableInfo = PaymentProcessor.GetPricingTableInfo();
+    }
+}

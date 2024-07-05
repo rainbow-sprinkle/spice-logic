@@ -1,0 +1,120 @@
+﻿@using Microsoft.AspNetCore.Components.QuickGrid
+<h1>All Projects</h1>
+
+<div class="general-board">
+    <div class="p-sm-4">
+        <QuickGrid Items="@_allProjects.AsQueryable()">
+            <PropertyColumn Property="@(p => p.ProjectName)" />
+            <PropertyColumn Property="@(p => p.ProjectType)" />
+            <PropertyColumn Property="@(p => p.Events)" />
+            <PropertyColumn Property="@(p => p.Funnels)" />
+            <PropertyColumn Property="@(p => p.HeatMap)" />
+            <PropertyColumn Property="@(p => p.Settings)" />
+            <PropertyColumn Property="@(p => p.SessionLimit)" />
+        </QuickGrid>
+    </div>
+</div>
+
+<div class="my-sm-4 d-flex flex-row justify-content-center align-items-center">
+    <button class="btn-primary p-sm-2 d-flex flex-row justify-content-center align-items-center" onclick="modalShow()"><i class="fa fa-plus icon-small-size"></i>New project</button>
+</div>
+<div class="position-absolute modal-fullscreen modal-background modal-none" id="modal-background"></div>
+<div class="modal-board modal-none" id="new-project">
+    <div class="modal-title d-flex flex-column">
+        <div class="modal-title-container">
+            <div class="position-relative">New project <span class="modal-close position-absolute" onclick="modalClose()"><i class="fa fa-solid fa-x icon-normal-size"></i></span></div>
+            
+        </div>
+    </div>
+    <div class="modal-content">
+        <input type="text" class="form-control" placeholder="Project name">
+        <div style="border-radius:.5rem;" class="border-radius-2 modal-content-gray-background p-lg-3 my-xl-4 d-flex flex-column">
+            <div class="form-check align-items-md-start mb-md-2 d-flex flex-row">
+                <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1">
+                <label class="form-check-label d-flex flex-column ms-md-3" for="flexRadioDefault1">
+                    <span class="title">Website</span>
+                    <span class="small-description">Track your visitors’ data on any website or in a web application.</span>
+                </label>
+            </div>
+
+            <div class="form-check align-items-md-start mb-md-2 d-flex flex-row">
+                <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1">
+                <label class="form-check-label d-flex flex-column ms-md-3" for="flexRadioDefault1">
+                    <span class="title">Mobile app</span>
+                    <span class="small-description">Track your visitors’ data in any mobile application available for Android or iOS.</span>
+                </label>
+            </div>
+
+            <div class="form-check align-items-md-start mb-md-2 d-flex flex-row">
+                <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1">
+                <label class="form-check-label d-flex flex-column ms-md-3" for="flexRadioDefault1">
+                    <span class="title">Cross-platform (Website and Mobile app)</span>
+                    <span class="small-description">Track your visitors’ data across both your website and mobile application.</span>
+                </label>
+            </div>
+        </div>
+        <div class="modal-bottom-btns d-flex flex-row justify-content-between">
+            <button class="btn-danger p-2">Discard change</button>
+            <button class="btn-primary p-2">Create</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    function modalShow() {
+        let modal = $("#new-project");
+        let background = $("#modal-background");
+        background.toggle();
+        modal.toggle();
+    }
+
+    function modalClose() {
+        $("#new-project").hide();
+        $("#modal-background").hide();
+    }
+</script>
+
+@code {
+    private static Random _random = new();
+
+    private List<ProjectInfo> _allProjects = [];
+
+    // Define ProjectInfo as a record with positional parameters
+    public record ProjectInfo(
+        string ProjectName,
+        string ProjectType,
+        string SessionLimit,
+        string HeatMap,
+        string Events,
+        string Funnels,
+        string Settings);
+
+    protected override async Task OnInitializedAsync()
+    {
+        List<ProjectInfo> projects = [];
+        for (int i = 0; i < 8; i++)
+        {
+            // Using the new with expression to initialize the record
+            projects.Add(new ProjectInfo(
+                RandomString(10),
+                RandomString(10),
+                RandomString(10),
+                RandomString(10),
+                RandomString(10),
+                RandomString(10),
+                RandomString(10)));
+        }
+        _allProjects = projects;
+    }
+
+    private static string RandomString(int length)
+    {
+        const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        char[] stringChars = new char[length];
+        for (int i = 0; i < stringChars.Length; i++)
+        {
+            stringChars[i] = chars[_random.Next(chars.Length)];
+        }
+        return new string(stringChars);
+    }
+}

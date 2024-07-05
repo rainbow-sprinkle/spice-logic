@@ -1,0 +1,56 @@
+﻿@page "/subscriptionplans/details"
+@using DataAccess.Entities
+@using BusinessDomain.Contracts
+@inject ISubscriptionPlanManager SubscriptionPlanManager
+@inject NavigationManager NavigationManager
+
+<PageTitle>Details</PageTitle>
+
+<h1>Details</h1>
+
+<div>
+    <h4>SubscriptionPlan</h4>
+    <hr />
+    @if (_subscriptionPlan is null)
+    {
+        <p><em>Loading...</em></p>
+    }
+    else {
+        <dl class="row">
+            <dt class="col-sm-2">Name</dt>
+            <dd class="col-sm-10">@_subscriptionPlan.Name</dd>
+            <dt class="col-sm-2">Stripe Price Id</dt>
+            <dd class="col-sm-10">@_subscriptionPlan.StripePriceId</dd>
+            <dt class="col-sm-2">MonthlyCost</dt>
+            <dd class="col-sm-10">@_subscriptionPlan.MonthlyCost</dd>
+            <dt class="col-sm-2">AnnualCost</dt>
+            <dd class="col-sm-10">@_subscriptionPlan.AnnualCost</dd>
+        </dl>
+        <div>
+            <a href="@Edit.GetPageUrl(_subscriptionPlan.Id)">Edit</a> |
+            <a href="@Index.PageUrl">Back to List</a>
+        </div>
+    }
+</div>
+
+@code {
+
+    private const string PageUrl= "/subscriptionplans/details";
+
+    public static string GetPageUrl(long id) => $"{PageUrl}?id={id}";
+
+    SubscriptionPlan? _subscriptionPlan;
+
+    [SupplyParameterFromQuery]
+    public long Id { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        _subscriptionPlan = await SubscriptionPlanManager.GetSubscriptionPlanById(Id);
+
+        if (_subscriptionPlan is null)
+        {
+            NavigationManager.NavigateTo(NotFound.PageUrl);
+        }
+    }
+}

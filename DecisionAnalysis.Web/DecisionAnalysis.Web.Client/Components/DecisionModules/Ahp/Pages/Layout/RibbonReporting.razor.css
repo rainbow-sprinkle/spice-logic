@@ -1,0 +1,9 @@
+﻿button {
+    font-size: 12px;
+    color: #00156e;
+}
+    button:hover {
+        background-image: linear-gradient(#ffd559, #ffe087);
+        border: 1px solid #cab583;
+        border-radius: 3px;
+    }

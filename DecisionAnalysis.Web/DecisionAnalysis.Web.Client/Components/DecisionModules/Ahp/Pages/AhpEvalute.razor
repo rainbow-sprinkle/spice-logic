@@ -1,0 +1,161 @@
+﻿@page "/evalute"
+@using DecisionAnalysis.Web.Client.Components.DecisionModules.Ahp.Pages.Placeholder
+@rendermode InteractiveAuto
+
+<div class="w-100 h-100 position-relative border border-1" >
+    <div class="w-100 py-2 d-flex flex-row justify-content-center position-relative modal-header">
+        <b>Evaluate the options based on {...}.</b>
+        <span role="button" @onclick="() => modalClose()" class="@(modal ? "d-block" : "d-none") position-absolute top-1 end-1 d-flex justify-content-center align-items-center icon-large"><i class="fa fa-window-close"></i></span>
+    </div>
+    <div class="@(modalState ? "d-block" : "d-none") position-absolute modal-container analysis-modal">
+        <div class="w-100 py-2 d-flex flex-row justify-content-center position-relative modal_header">
+            <b>One way sensitivity analysis</b>
+            <span role="button" class="position-absolute top-1 end-1 d-flex justify-content-center align-items-center icon-normal" @onclick="() => modalState = false"><i class="fa fa-window-close"></i></span>
+        </div>
+        <AhpChart Title="Priority" @key="index" Items="@Items" Values="@Values" type="line" />
+        <div class="py-1 px-2 w-100">
+            <p><span>Current @(LeftName)/@(RightName) Ratio: </span> @(Left)/@(Right)</p>
+            <p><span>Decision Change Sensitivity: </span> 0%</p>
+        </div>
+    </div>
+    <div class="@(_matrixModalState ? "d-block" : "d-none") position-absolute modal-container matrix-modal">
+        <div class="w-100 py-2 d-flex flex-row justify-content-center position-relative modal-header">
+            <b>Set your relative preference</b>
+            <span role="button" class="position-absolute top-1 end-1 d-flex justify-content-center align-items-center icon-normal" @onclick="() => _matrixModalState = false"><i class="fa fa-window-close"></i></span>
+        </div>
+        <Judge OnModal="@modalShow" OnAction="@chartValues" Width=320 Step=20 HandShow="false" />
+    </div>
+    <SfSplitter Height="93%" Width="100%">
+        <SplitterPanes>
+            <SplitterPane Size="@(leftBarState ? "50%" : "100%")" Max="100%" Min="@(leftBarState ? "50%" : "100%")">
+                <ContentTemplate>
+                    <div class="position-relative h-100 d-flex flex-column" style="width: @(leftBarState ? "100%" : "98%")">
+                        <div class="form-check py-3 ms-4 checkbox-big" @onclick="() => {matrixState = !matrixState;}">
+                            <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+                            <label class="form-check-label" for="flexCheckDefault">
+                                Matrix View
+                            </label>
+                        </div>
+                        <div class="w-100 d-flex flex-column justify-content-center gap-4">
+                            @if (matrixState == false)
+                            {
+                                <InputPagination />
+                                <div class="d-flex justify-content-center mb-5" style="overflow: auto">
+                                    <Judge OnModal="@modalShow" OnAction="@chartValues" Width=240 Step=15/>
+                                </div>
+                            }
+                            else
+                            {
+                                <div style="overflow: auto; min-height: 300px">
+                                    <MatrixTable Items="@MatrixItems" Values="@MatrixValues" OpenModal="@openModal" />
+                                </div>
+                            }
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center position-absolute bottom-0 w-100">
+                            <div class="form-check py-3 ms-4 checkbox-big">
+                                <input class="form-check-input" type="checkbox" value="" id="enforce">
+                                <label class="form-check-label" for="enforce">
+                                    Enforce Transitivity Rule
+                                </label>
+                            </div>
+                            <span class="d-flex align-items-center pe-3 info-muted">
+                                Consistency Ratio
+                                <span role="button" style="margin-left: 5px;" class="info-icon icon-small circle d-flex align-items-center justify-content-center" @onfocusout="() => {consistentState = false; StateHasChanged();}" @onclick="() => consistentState = !consistentState"><i class="fa fa-solid fa-info"></i></span>
+                            </span>
+                        </div>
+                        <div class="@(consistentState ? "d-block" : "d-none") p-3 position-absolute modal-container info-modal" @onclick="() => consistentState = true">
+                            <p class="text-center pb-2 font-black-color"><b>Consistency Ratio</b></p>
+                            <p class="modal-content-paragraph">Suppose you like an apple twice as much as an orange and an orange 3 times as much as a banana. Logically, you should like an apple 6 times as much as a banana, If your preference between an 'apple' and a 'banana' does not reflect that proportion, then you are said to be inconsistent in your preferences.</p>
+                            <br />
+                            <p class="modal-content-paragraph ">Consistency ratio measures such inconsistency. It is a measurement that indicates how much you violate the transitivity rule. Naturally, when the transitivity rule is enforced, or when you are 100% consistent in your preferences, the deviation will be 0. The higher is this number, the more inconsistent you are.</p>
+                            <br />
+                            <p class="modal-content-footer">According to Thomas L. Saaty, the inventor,architect, and primary theorefician of the Analytic Hierachy Process, the consistency ratio should be less or equal to 0.1</p>
+                        </div>
+                        <div class="@(leftBarState ? "d-none" : "d-block") h-100 d-flex flex-row justify-content-center position-absolute top-0 h-100 d-flex vertical-line-bar" style="right: -26px;" role="button" @onclick="() => leftBarState = true">
+                            <span class="icon-small"><i class="fa fa-solid fa-chevron-left"></i></span>
+                        </div>
+                    </div>
+                </ContentTemplate>
+            </SplitterPane>
+            <SplitterPane Size="@(leftBarState ? "50%" : "0%")" Max="@(leftBarState ? "100%" : "0%")" Min="@(leftBarState ? "50%" : "0%")">
+                <ContentTemplate>
+                    <div class="d-flex flex-row position-relative pe-3 h-100">
+                        <div class="h-100 d-flex flex-row justify-content-center vertical-line-bar" role="button" @onclick="() => leftBarState = false">
+                            <span class="icon-small"><i class="fa fa-solid fa-chevron-right"></i></span>
+                        </div>
+                        <div class="w-100 h-100 d-flex justify-content-center align-items-center">
+                            <AhpChart Title="Priority" @key="index" Items="@Items" Values="@Values" type="bar"/>  
+                        </div>
+
+                    </div>
+                </ContentTemplate>
+            </SplitterPane>
+        </SplitterPanes>
+    </SfSplitter>
+</div>
+
+@code {
+    [Parameter]
+    public Action modalClose{ get; set; }
+    [Parameter]
+    public Action<double> getEnjoyValue{ get; set; }
+    private bool leftBarState = true;
+    private bool matrixState = false;
+    private bool consistentState = false;
+    private bool modalState = false;
+    private int Left = 1;
+    private int Right = 1;
+    private string LeftName;
+    private string RightName;
+
+    [Parameter]
+    public bool modal { get; set; }
+
+    private List<string> Items = ["mmm", "123"];
+    private List<double> Values =
+    [
+        50,
+        50
+    ];
+    private int index = 0;
+
+    private List<string> MatrixItems =
+    [
+        "abc",
+        "def",
+        "ghi"
+    ];
+    private List<List<double>> MatrixValues =
+    [
+        [1, 0.3, 0.6],
+        [0.5, 1, 0.6],
+        [0.3, 0.7, 1]
+    ];
+    private bool _matrixModalState;
+
+    private void chartValues(int left, int right)
+    {
+        Left = left;
+        Right = right;
+        var numL = 100.0 / (left + right) * left;
+        var numR = 100.0 / (left + right) * right;
+
+        Values[0] = numL;
+        Values[1] = numR;
+        getEnjoyValue(Math.Round(left / (left + (double)right),2));
+        index++;
+        StateHasChanged();
+    }
+    private void modalShow(string leftName, string rightName)
+    {
+        LeftName = leftName;
+        RightName = rightName;
+        modalState = true;
+        StateHasChanged();
+    }
+    private void openModal()
+    {
+        _matrixModalState = true;
+        StateHasChanged();
+    }
+}

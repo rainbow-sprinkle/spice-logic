@@ -1,0 +1,12 @@
+﻿span > svg {
+    width: 17px !important;
+    height: 17px !important;
+}
+
+.big-button {
+    border: 1px solid #5796a6;
+    font-size: 29px;
+    gap: 15px;
+    background-color: white;
+    color: #5796a6;
+}

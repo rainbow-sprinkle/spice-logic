@@ -1,0 +1,104 @@
+﻿@page "/ahp"
+@rendermode InteractiveAuto
+@inject AhpStateContainerService ahpStateService;
+@inject NavigationManager navigationManager;
+@using ChangeEventArgs = Microsoft.AspNetCore.Components.ChangeEventArgs
+@using DecisionAnalysis.Web.Client.Components.Service
+@implements IDisposable
+
+<AhpMenu page="home"/>
+<div class="d-flex flex-row pt-4 w-100 h-100">
+    @if (_step == 1)
+    {
+        <div class="border border-1 panel_bg_color panel-inner-border-color panel-outer px-3 py-5 mx-3 d-flex flex-column gap-3 w-100 panel-shadow">
+            <p class="text-center py-5 panel-title"><b>Let's begin with the end in mind. What is your Goal?</b></p>
+            <div class="d-flex justify-content-center mb-5">
+                <img src="./images/mountainup.png" width="75" height="100" />
+            </div>
+            <div class="d-flex justify-content-center">
+                <input type="text" class="form-control w-50 @(_warnState ? "warn-border" : "")" placeholder="i.e. Hire the best candidate, Rent the best location, etc." @bind="@_currentGoal" @oninput="OnInputGoal">
+            </div>
+            <div class="d-flex justify-content-center w-20">
+                <button class="btn-primary py-3 px-4 mt-5 primary-button" @onclick='() => SetGoal()'>Proceed</button>
+            </div>
+        </div>
+    }
+    else if (_step == 2)
+    {
+
+        <div class="border border-1 panel_bg_color panel-inner-border-color panel-outer px-3 py-5 mx-3 d-flex flex-column gap-3 w-100 panel-shadow">
+            <p class="page-title text-center py-5"><b>Ok,your goal is defined. Now, please identify your first criterion.</b></p>
+            <div class="d-flex justify-content-center mb-5">
+                <img src="./images/arrow.png" width="75" height="100" />
+            </div>
+            <div class="d-flex justify-content-center">
+                <input type="text" class="form-control w-50 @(_warnState ? "warn-border" : "")" placeholder="Criterion:(i.e Revenue, Cost, Life years, Quality of Life, Comfort, etc.)" @bind="_currentCriteria" @oninput="OnInputCriteria">
+            </div>
+            <div class="d-flex justify-content-center w-20 gap-2">
+                <button class="btn-primary py-3 px-4 mt-5 primary-button" @onclick='SetCriteria'>Proceed</button>
+                <button class="btn-primary py-3 px-4 mt-5 secondary-button" @onclick="() => OnCancel()">Cancel</button>
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    private int _step = 1;
+    private string _currentGoal = "";
+    private string _currentCriteria = "";
+    private bool _warnState;
+
+    protected override void OnInitialized()
+    {
+        ahpStateService.OnStateChange += StateHasChanged;
+    }
+    private void SetGoal()
+    {
+        if(_currentGoal == "")
+        {
+            _warnState = true;
+
+        }else
+        {
+            _warnState = false;
+            ahpStateService.SetGoal(_currentGoal);
+            StateHasChanged();
+            _step++;
+        }
+    }
+    private void SetCriteria()
+    {
+        if(_currentCriteria == "")
+        {
+            _warnState = true;
+        }
+        else
+        {
+            _warnState = false;
+            //           var data = new AhpStateContainerService.Criteria(CurrentCriteria);
+            //           ahpStateService.SetCriterias(data);
+            StateHasChanged();
+            navigationManager.NavigateTo("ahp_add_another_criteria/parent/0/0");
+        }
+    }
+    private void OnInputGoal(ChangeEventArgs e)
+    {
+        _warnState = false; 
+        _currentGoal = e.Value?.ToString() ?? string.Empty;
+    }
+    private void OnInputCriteria(ChangeEventArgs e)
+    {
+        _warnState = false;
+        _currentCriteria = e.Value?.ToString() ?? string.Empty;
+    }
+    private void OnCancel()
+    {
+        _step = 1;
+        _currentCriteria = "";
+        StateHasChanged();
+    }
+    public void Dispose()
+    {
+        ahpStateService.OnStateChange -= StateHasChanged;
+    }
+}

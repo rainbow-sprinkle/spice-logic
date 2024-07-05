@@ -1,0 +1,39 @@
+// Mixins
+@mixin boxShadow($x, $y, $blur, $spread, $color) {
+    box-shadow: $x $y $blur $spread $color;
+}
+
+@mixin buttonFocusShadow($color) {
+    &:focus, &:active:focus {
+        @include boxShadow(0, 0, 0, 0.1rem, white);
+        @include boxShadow(0, 0, 0, 0.25rem, $color);
+    }
+}
+
+@mixin tabItemStyle($bgColor, $borderColor) {
+    background-color: $bgColor;
+    border-color: $borderColor;
+}
+
+@mixin size($width, $height) {
+    width: $width !important;
+    height: $height !important;
+}
+
+@mixin customTextStyle($fontColor, $backgroundColor, $fontSize, $lineHeight) {
+    @if $fontColor != null {
+        color: $fontColor !important;
+    }
+
+    @if $backgroundColor != null {
+        background-color: $backgroundColor !important;
+    }
+
+    @if $fontSize != null {
+        font-size: $fontSize !important;
+    }
+
+    @if $lineHeight != null {
+        line-height: $lineHeight !important;
+    }
+}

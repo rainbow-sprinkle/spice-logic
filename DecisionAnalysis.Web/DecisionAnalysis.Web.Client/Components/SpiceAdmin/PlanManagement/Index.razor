@@ -1,0 +1,44 @@
+﻿@page "/spice-admin/subscriptionplans"
+@using DataAccess.Entities
+@using Microsoft.AspNetCore.Components.QuickGrid
+@using BusinessDomain.Contracts
+@using DecisionAnalysis.Web.Client.UiUtilities
+@inject ISubscriptionPlanManager SubscriptionPlanManager
+@inject IBlazorJsFacade JsFacade
+@rendermode InteractiveServer
+
+<PageTitle>Index</PageTitle>
+
+<h1>Index</h1>
+
+<p>
+    <a href="@Create.PageUrl">Create New</a>
+</p>
+
+<QuickGrid Class="table" @ref="OrdersQuickGrid" Items="SubscriptionPlanManager.GetAllSubscriptionPlans()">
+    <PropertyColumn Property="subscription => subscription.Name" />
+    <PropertyColumn Property="subscription => subscription.MonthlyCost" />
+    <PropertyColumn Property="subscription => subscription.AnnualCost" />
+    <PropertyColumn Property="subscription => subscription.StripePriceId" />
+    <TemplateColumn Context="subscriptionPlan">
+        <a href="@(Edit.GetPageUrl(subscriptionPlan.Id))">Edit</a> |
+        <a href="@Details.GetPageUrl(subscriptionPlan.Id)">Details</a> |
+        <button @onclick="x => DeleteRecord(subscriptionPlan.Id)">Delete</button>
+    </TemplateColumn>
+</QuickGrid>
+
+@code
+{
+    public const string PageUrl = "/spice-admin/subscriptionplans";
+    private QuickGrid<SubscriptionPlan> OrdersQuickGrid { get; set; } = null!;
+
+    private async Task DeleteRecord(long id)
+    {
+        if (await JsFacade.ShowConfirm($"Are you sure that you want to delete this record with ID: {id}?"))
+        {
+            await SubscriptionPlanManager.DeleteSubscriptionPlan(id);
+
+            await OrdersQuickGrid.RefreshDataAsync();
+        }
+    }
+}

@@ -1,0 +1,69 @@
+﻿@rendermode InteractiveAuto
+@inject NavigationManager navigationManager;
+@if (First)
+{
+    <div class="px-3 py-5 d-flex flex-column gap-3 w-100 h-100 panel_bg_color">
+        <div class="d-flex justify-content-center mb-5 mt-4">
+            <img src="./images/arrow.png" width="100" height="100" />
+        </div>
+        <div class="d-flex justify-content-center">
+            <input type="text" class="form-control w-50 @(_warnState ? "warn-border" : "")" placeholder="Criterion:(i.e Revenue, Cost, Life years, Quality of Life, Comfort, etc.)" @bind="_currentCriteria" @oninput="@(e => {_warnState = false; _currentCriteria = e.Value?.ToString() ?? string.Empty;})">
+        </div>
+        <div class="d-flex justify-content-center w-20 gap-4">
+            <button class="btn-primary py-3 px-4 mt-5 primary-button" @onclick='addCriteria'>Proceed</button>
+            <button class="btn-primary py-3 px-4 mt-5 secondary-button" @onclick='() => Cancel?.Invoke()'>Cancel</button>
+        </div>
+    </div>
+}
+else
+{
+    @if(_step == 1)
+    {
+        <div class="px-3 py-5 d-flex flex-column gap-3 w-100 h-100 panel_bg_color">
+            <div class="d-flex justify-content-center mb-5 mt-4">
+                <img src="./images/arrow.png" width="100" height="100" />
+            </div>
+            <p class="panel-title text-center"><b>Do you want to add another criterion?</b></p>
+            <div class="d-flex justify-content-center w-20 gap-4">
+                <button class="btn-primary py-3 px-5 mt-5 primary-button" @onclick='() => _step = 2'>Yes</button>
+                <button class="btn-primary py-3 px-5 mt-5 secondary-button" @onclick='() => Cancel?.Invoke()'>No</button>
+            </div>
+        </div>
+    }
+    else if(_step == 2)
+    {
+        <div class="px-3 py-5 d-flex flex-column gap-3 w-100 h-100 panel_bg_color">
+            <div class="d-flex justify-content-center mb-5 mt-4">
+                <img src="./images/add.png" width="100" height="100" />
+            </div>
+            <div class="d-flex justify-content-center">
+                <input type="text" class="form-control w-50 @(_warnState ? "warn-border" : "")" placeholder="Criterion:(i.e Revenue, Cost, Life years, Quality of Life, Comfort, etc.)" @bind="_currentCriteria" @oninput="@(e => {_warnState = false; _currentCriteria = e.Value?.ToString() ?? string.Empty;})">
+            </div>
+            <div class="d-flex justify-content-center w-20 gap-4">
+                <button class="btn-primary py-3 px-4 mt-5 primary-button" @onclick='addCriteria'>Proceed</button>
+                <button class="btn-primary py-3 px-4 mt-5 secondary-button" @onclick='() => Cancel?.Invoke()'>Cancel</button>
+            </div>
+        </div>
+    }
+}
+
+@code {
+    [Parameter]
+    public Action<string> Add { get; set; }
+    [Parameter]
+    public Action Cancel{ get; set; }
+    [Parameter]
+    public bool First { get; set; }
+    private bool _warnState = false;
+    private string _currentCriteria = "";
+    private int _step = 1;
+    private void addCriteria()
+    {
+        if(_currentCriteria == "")
+        {
+            _warnState = true;
+            return;
+        }
+        Add?.Invoke(_currentCriteria);
+    }
+}

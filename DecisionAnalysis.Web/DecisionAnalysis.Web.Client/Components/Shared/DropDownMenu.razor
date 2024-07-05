@@ -1,0 +1,22 @@
+﻿<div class="dropdown">
+    <button class="dropbtn">@DropDownLabel</button>
+    <div class="dropdown-content">
+       @foreach (var anItem in Items)
+       {
+            <a href="@anItem.Url">@anItem.Text</a>
+       }
+    </div>
+</div>
+
+@code
+{
+    public record HyperlinkItem(string Text, string Url);
+
+    [Parameter] 
+    [EditorRequired]
+    public List<HyperlinkItem> Items { get; set; } = [];
+
+    [Parameter]
+    [EditorRequired]
+    public string DropDownLabel { get; set; } = "Drop-Down";
+}

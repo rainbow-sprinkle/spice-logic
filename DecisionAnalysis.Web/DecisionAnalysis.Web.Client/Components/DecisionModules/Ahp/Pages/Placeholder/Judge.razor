@@ -1,0 +1,137 @@
+﻿@page "/judge"
+@using ChangeEventArgs = Microsoft.AspNetCore.Components.ChangeEventArgs
+@rendermode InteractiveAuto
+
+<div class="d-flex flex-row gap-1 d-flex align-items-center" style="margin-top: 40px;">
+    <div class="d-flex flex-column align-items-center">
+        @if (_leftState)
+        {
+            <input type="number" min="1" max="9" @bind-value="@_leftNumber" @oninput="OnLeftInput" @onfocusout="_ => _leftState = false" />
+        }
+        else{
+            <span @onclick="() => _leftState = true" class="rate">@_leftNumber</span>
+        }
+        <span class="des">(@(_des[_leftNumber-1]))</span>
+        <div role="button" class="@(_handShow ? "d-flex" : "d-none") justify-content-center" style="width:20px; height: 30px" @onclick="() => OnModal?.Invoke(_leftName,_rightName)"><img src="./images/handclick.png" width="100%" height="100%" /></div>
+    </div>
+    <div class="d-flex flex-column position-relative">
+        <div style="width: @(Width + "px"); height: 40px; transform: translate(0px, @(_x + "px")) rotate(@(_angle + "deg")); z-index: 101" class="position-relative">
+            <img src="./images/judge2.png" width="100%" height="100%" />
+            <span class="position-absolute" style="top: -20px; left: 20px">@(_leftName)</span>
+            <span class="position-absolute" style="top: -20px; right: 20px">@(_rightName)</span>
+        </div>
+        <div style="width: @(_height + "px"); height: @(_height + "px"); top: 40px; left: @(_currentValue - _height / 2  + "px")" class="position-absolute"><img src="./images/triangle.png" width="100%" height="100%" /></div>
+        <div style="border-top: 2px solid gray; margin-top: 36px; width: @(Width + "px");"></div>
+        <input type="range" style="width: @(Width + "px");" min="0" max="@(Width)" step="@(Step)" @bind-value="@_currentValue" @oninput="e => {
+            _currentValue = int.Parse(e.Value?.ToString() ?? string.Empty);
+            _rightNumber = 1; _leftNumber = 1;
+            if(_currentValue - Width / 2 < 0) _rightNumber = Math.Abs(_currentValue - Width / 2) / Step + 1;
+            if(_currentValue - Width / 2 > 0) _leftNumber = Math.Abs(_currentValue - Width / 2) / Step + 1;
+            Calculate();
+        }" />
+    </div>
+    <div class="d-flex flex-column align-items-center">
+        @if (_rightState)
+        {
+            <input type="number" min="1" max="9" @bind-value="@_rightNumber" @oninput="OnRightInput" @onfocusout="() => _rightState = false"/>
+        }
+        else
+        {
+            <span @onclick="() => _rightState = true" class="rate">@_rightNumber</span>
+        }
+        <span class="des">(@(_des[_rightNumber-1]))</span>
+        <div role="button" class="@(_handShow ? "d-flex" : "d-none") justify-content-center" style="width:20px; height: 30px" @onclick="() => OnModal?.Invoke(_leftName,_rightName)"><img src="./images/handclick.png" width="100%" height="100%" /></div>
+    </div>
+</div>
+
+@code {
+
+    private int _height = 36;
+
+    [Parameter]
+    public int Width { get; set; }
+    [Parameter]
+    public int Step{ get; set; }
+    [Parameter]
+    public bool? HandShow { get; set; }
+
+    private bool _handShow;
+
+    private int _currentValue;
+
+    protected override void OnInitialized()
+    {
+        _currentValue = Width / 2;
+        HandShow = HandShow ?? true;
+        _handShow = HandShow ?? true;
+        base.OnInitialized();
+    }
+
+    private double _x = 0;
+    private double _angle = 0;
+
+    private bool _leftState = false;
+    private int _leftNumber = 1;
+
+    private bool _rightState = false;
+    private int _rightNumber = 1;
+
+    private string _leftName = "mmm";
+    private string _rightName = "123";
+
+    [Parameter]
+    public Action<int,int>? OnAction{ get; set; }
+    [Parameter]
+    public Action<string, string>? OnModal{ get; set; }
+
+    private List<string> _des =
+    [
+        "Equal importance",
+        "Weak",
+        "Moderate importance",
+        "Moderate+importance",
+        "Strong importance",
+        "Strong+importance",
+        "Very strong importance",
+        "Very,very strong importance",
+        "Extreme importance"
+    ];
+
+    private void Calculate()
+    {
+        _x = 2 * _height * Math.Abs(_currentValue - Width/2) / (Width + 2 * Math.Abs(_currentValue - Width / 2.0));
+
+        if (_currentValue == Width / 2)
+        {
+            _angle = 0;
+            OnAction?.Invoke(_leftNumber, _rightNumber);
+            return;
+        }
+        _angle = Math.Atan(2 * (double)_height / (Width + 2 * Math.Abs(_currentValue - Width / 2.0)));
+        _angle = _angle / Math.PI * 180;
+
+        if (_currentValue - Width / 2 > 0)
+        {
+            _angle = -_angle;
+        }
+
+        OnAction?.Invoke(_leftNumber, _rightNumber);
+    }
+
+    private void OnLeftInput(ChangeEventArgs e)
+    {
+        _leftNumber = int.Parse(e.Value?.ToString() ?? string.Empty); 
+        _rightNumber = 1;
+        _currentValue = Width / 2 + Step * (_leftNumber - 1);
+        Calculate();
+    }
+
+    private void OnRightInput(ChangeEventArgs e)
+    {
+        _rightNumber = int.Parse(e.Value?.ToString() ?? string.Empty);
+        _leftNumber = 1;
+        _currentValue = Width / 2 - Step * (_rightNumber - 1);
+        Calculate();
+    }
+
+}

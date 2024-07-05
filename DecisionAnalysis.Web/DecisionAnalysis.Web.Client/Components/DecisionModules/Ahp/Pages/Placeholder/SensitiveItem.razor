@@ -1,0 +1,16 @@
+﻿<div class="d-flex flex-row pt-2 bottom-line">
+    <div class="py-1 px-2 d-flex justify-content-center align-items-center right-line sensitive-item-flow" style="width: 60%">
+        [Criterion : 123]->[Option : 123]->[Value][Pair Comparison Against]->[Option : 456]
+    </div>
+    <div class="py-1 px-2 d-flex justify-content-center align-items-center right-line" style="width: 20%">
+        <span class="sensitive-item-pecent">100%</span>
+    </div>
+    <div class="py-1 px-2 d-flex justify-content-center align-items-center" style="width: 20%" role="button" @onclick="() => OpenModal?.Invoke()">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ4f8V9Zyb-UHVrcPizJI-o6OeN4dCfiAKPKx5ZZYUqgYEaLvF7" width="50" height="50" />
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public Action OpenModal{ get; set; }
+}

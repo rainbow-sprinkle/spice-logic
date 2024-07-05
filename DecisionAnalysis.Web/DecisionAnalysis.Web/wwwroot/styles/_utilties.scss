@@ -1,0 +1,397 @@
+﻿// Base styles
+.content {
+    padding-top: 1.1rem;
+}
+
+.btn-primary {
+    color: $primary-color;
+    background-color: $primary-btn-color;
+    border-color: $primary-btn-border-color;
+}
+
+.general-board {
+    @include boxShadow(0px, 0px, 10px, 3px, rgba(2, 49, 137, 0.06));
+    background-color: $background-color-1;
+    border-radius: 12px;
+    position: relative;
+    box-sizing: border-box;
+}
+
+.btn {
+    @include buttonFocusShadow($focus-shadow-color);
+}
+
+.form-control {
+    padding: 2px 30px;
+    height: 39px;
+}
+
+.tab-board {
+    z-index: 1;
+    @include boxShadow(0px, 0px, 10px, 3px, rgba(2, 49, 137, 0.12));
+    background: $background-color-1;
+}
+
+.tab-item {
+    padding: 12px;
+    background-color: $primary-color;
+    color: $font-color-default;
+    font-weight: 500;
+    line-height: 22px;
+    font-size: 16px;
+    border-bottom: 2px solid transparent;
+    border-radius: 8px 8px 0 0;
+    cursor: pointer;
+
+    &:hover {
+        color: $font-color-hover;
+        border-bottom: 2px solid hsla(204, 77%, 96%, 1);
+    }
+
+    &:active, &.active {
+        @include tabItemStyle(hsla(300, 11%, 98%, 1), hsla(212, 100%, 40%, 1));
+    }
+}
+
+
+.icon-small > svg {
+    @include size(15px, 15px);
+}
+
+.icon-normal > svg {
+    @include size(20px, 20px);
+}
+
+.icon-big > svg {
+    @include size(24px, 24px);
+}
+
+.icon-large > svg {
+  @include size(30px, 30px);
+}
+
+.title {
+    color: hsla(225, 59%, 34%, 1);
+    font-size: 14px;
+    line-height: 20px;
+}
+
+.small-description {
+    font-size: 12px;
+    line-height: 16px;
+    color: hsla(219, 34%, 62%, 1);
+}
+
+.form-group {
+    margin-bottom: 0px !important;
+}
+
+article.content {
+    padding: 0px !important;
+}
+
+/*------------------border-color-------------------------*/
+.border-gray-color {
+    border-color: gray !important;
+}
+
+/*----------------Background Color---------------------*/
+.bg-gray-color {
+    background-color: #d6d6d6 !important;
+}
+.bg-white-color {
+    background-color: white !important;
+}
+.bg-8-color {
+    background-color: $background-color-8 !important;
+}
+.bg-9-color {
+    background-color: $background-color-9 !important;
+}
+
+/*----------------Font Color---------------------------*/
+.font-black-color {
+    color: black !important;
+}
+.font-white-color {
+    color: white !important;
+}
+.font-10-color {
+    color: $color-10 !important;
+}
+.font-11-color {
+    color: $color-11 !important;
+}
+
+/*----------------width--------------------------------*/
+.w-1d3 {
+    width: 30%;
+}
+.w-1d4 {
+    width: 25%;
+}
+.w-1d5 {
+    width: 20%;
+}
+.w-4d5 {
+    width: 80%;
+}
+.w-1d10 {
+    width: 10%;
+}
+
+/*-----------------right-------------------------------*/
+.end-1 {
+    right: 12px !important;
+}
+
+.rect {
+    position: absolute;
+    border: 2px solid red;
+}
+
+.ribbon--border {
+    border: 1px solid $border-color-10
+}
+
+/////////////////////////////////////////////////////////////////
+
+.panel-outer {
+  height: 93vh !important;
+}
+
+.panel-inner {
+  height: 98% !important;
+}
+
+.panel-inner-border-color {
+    border-color: gray !important;
+}
+.panel_bg_color {
+    background-color: $background-color-10 !important;
+}
+
+.panel-shadow {
+    box-shadow: rgba(0, 0, 0, 0.09) 0px 2px 1px, rgba(0, 0, 0, 0.09) 0px 4px 2px, rgba(0, 0, 0, 0.09) 0px 8px 4px, rgba(0, 0, 0, 0.09) 0px 16px 8px, rgba(0, 0, 0, 0.09) 0px 32px 16px;
+}
+
+.panel-header {
+    @include customTextStyle($color-13, $background-color-14, 20px, null);
+}
+
+.panel-title {
+    @include customTextStyle($color-10, null, 20px, null);
+}
+
+.vertical-line-bar-icon {
+    margin-top: 10px;
+}
+
+.vertical-line-bar {
+    width: 30px;
+    background-color: $background-color-14;
+}
+
+.horizontal-line-bar {
+    @include customTextStyle($color-10, $background-color-14, 15px, null);
+}
+
+.double-border {
+    border: 5px double $border-color-8;
+}
+
+.vertical-tab-content-container {
+    width: calc(100% - 30px);
+}
+
+.vertical-tab-header-btn {
+    border: 1px solid gray;
+    padding-left: 16px;
+    padding-right: 5px;
+    border-top-left-radius: 45px;
+    border-top-right-radius: 15px;
+    background-image: linear-gradient(#a1bbd7,#dfebf6);
+}
+
+.vertical-tab-header-btn.active {
+    background-image: linear-gradient(#daeafb,#f2f7fc);
+}
+
+.vertical-tab-header-btn:hover {
+    background-image: linear-gradient(#95d7f3, #dbf1fb)
+}
+
+.modal-container {
+    border: 3px solid $border-color-9;
+    border-radius: 5px;
+    background-color: white !important;
+    z-index: 102;
+}
+
+.modal-header {
+    @include customTextStyle($color-13, $background-color-14, 15px, null);
+}
+
+.modal-content-paragraph {
+    @include customTextStyle(black, null, null, 23px);
+}
+
+.modal-content-footer {
+    @include customTextStyle($color-14, null, null, 23px);
+}
+
+.header-panel {
+    @include customTextStyle(white, $background-color-15, null, null);
+}
+
+.checkbox-big {
+    @include customTextStyle($color-13, null, 15px, null);
+}
+
+.checkbox-sm {
+    @include customTextStyle(gray, null, 13px, null);
+}
+
+.primary-checkbox_font_size {
+    @include customTextStyle(null, null, 15px, null);
+}
+
+.info-muted {
+    @include customTextStyle(gray, null, 13px, null);
+}
+
+.info-icon {
+    background-color: $background-color-16;
+}
+
+.circle {
+    border-radius: 9999px;
+}
+
+.primary-button {
+    background: $linear-1 !important;
+    border-radius: 5px !important;
+    color: white !important;
+
+    &:hover {
+      background: $linear-2 !important;
+    }
+}
+
+.secondary-button {
+    border-radius: 5px !important;
+    border: 2px solid $border-color-6 !important;
+    @include customTextStyle($color-10, white, 13px, null);
+
+    &:hover {
+      background-color: $background-color-11 !important;
+    }
+}
+
+.dashboard-button {
+    @include customTextStyle($color-13, null, null, null);
+}
+
+.notice-paragraph {
+    @include customTextStyle($color-10, null, null, 23px);
+}
+
+.diagram-zoom-panel-container {
+    height: 60%;
+    width: 100%;
+    background-color: #dddddd
+}
+
+.diagram-zoom-panel-control-container {
+    height: 40%;
+    padding: 28px 0px
+}
+
+.diagram-zoom-panel-control-item > span > svg {
+    width: 30px !important;
+    height: 30px !important;
+}
+.diagram-zoom-panel-control-item {
+    gap: 18px !important;
+}
+
+.menu-title {
+    @include customTextStyle($color-12, $background-color-12, null, null);
+}
+
+.menu-title a {
+    @include customTextStyle($color-12, null, null, null);
+}
+
+.dropmenu-item {
+    cursor: default;
+    @include customTextStyle(null, white, null, null);
+
+    &:hover {
+      background-color: $background-color-13
+    }
+}
+
+.dropmenu {
+    border: 2px solid $border-color-7;
+    background-color: $background-color-14;
+    width: 197px;
+}
+
+.dropmenu > div {
+    border: 1px solid $border-color-7;
+}
+
+.dropmenu-item-last {
+    border-top: 1px solid #00b1b3
+}
+
+.modal-background {
+    background-color: gray;
+    opacity: 0.7;
+}
+
+.ribbonBtn {
+    font-size: 12px;
+    color: #00156e;
+    max-width: 68px;
+
+    &:hover {
+      background-image: linear-gradient(#ffd559, #ffe087);
+      border: 1px solid #cab583;
+      border-radius: 3px;
+    }
+}
+
+.ribbon-menu-minheight {
+    min-height: 93px;
+}
+
+.member-item-menu {
+    border: 2px solid black;
+    top: 20px;
+    right: 0px;
+    z-index: 102
+}
+
+.member-button {
+    border-radius: 5px;
+    border: 2px solid gray;
+    @include customTextStyle($color-10, white, 15px, null);
+}
+
+.accordion_title {
+    @include customTextStyle(white, $background-color-15, null, null);
+}
+
+.right-line {
+    border-right: 1px solid gray;
+}
+
+.bottom-line {
+    border-bottom: 1px solid gray
+}
+
+.warn-border {
+    border: 1px solid red !important
+}

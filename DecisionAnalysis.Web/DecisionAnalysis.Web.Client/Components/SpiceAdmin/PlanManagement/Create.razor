@@ -1,0 +1,60 @@
+﻿@page "/spice-admin/subscriptionplans/create"
+@using DataAccess.Entities
+@using BusinessDomain.Contracts
+@inject NavigationManager NavigationManager
+@inject ISubscriptionPlanManager SubscriptionPlanManager
+
+<PageTitle>Create</PageTitle>
+
+<h1>Create</h1>
+
+<h4>SubscriptionPlan</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <EditForm method="post" Model="SubscriptionPlan" OnValidSubmit="AddSubscriptionPlan" FormName="create" Enhance>
+            <DataAnnotationsValidator />
+            <ValidationSummary class="text-danger" />
+            <div class="mb-3">
+                <label for="name" class="form-label">Name:</label> 
+                <InputText id="name" @bind-Value="SubscriptionPlan.Name" class="form-control" /> 
+                <ValidationMessage For="() => SubscriptionPlan.Name" class="text-danger" /> 
+            </div>      
+            <div class="mb-3">
+                <label for="stripePriceId" class="form-label">Stripe Price Id:</label> 
+                <InputText id="stripePriceId" @bind-Value="SubscriptionPlan.StripePriceId" class="form-control" />
+                <ValidationMessage For="() => SubscriptionPlan.StripePriceId" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="monthlycost" class="form-label">MonthlyCost:</label> 
+                <InputNumber id="monthlycost" @bind-Value="SubscriptionPlan.MonthlyCost" class="form-control" /> 
+                <ValidationMessage For="() => SubscriptionPlan.MonthlyCost" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="annualcost" class="form-label">AnnualCost:</label> 
+                <InputNumber id="annualcost" @bind-Value="SubscriptionPlan.AnnualCost" class="form-control" /> 
+                <ValidationMessage For="() => SubscriptionPlan.AnnualCost" class="text-danger" /> 
+            </div>        
+            <button type="submit" class="btn btn-primary">Create</button>
+        </EditForm>
+    </div>
+</div>
+
+<div>
+    <a href="@(Index.PageUrl)">Back to List</a>
+</div>
+
+@code {
+
+    public const string PageUrl = "/spice-admin/subscriptionplans/create";
+
+    [SupplyParameterFromForm]
+    public SubscriptionPlan SubscriptionPlan { get; set; } = new();
+
+    // To protect from over posting attacks, see https://aka.ms/RazorPagesCRUD
+    public async Task AddSubscriptionPlan()
+    {
+        await SubscriptionPlanManager.AddSubscriptionPlan(SubscriptionPlan);
+        NavigationManager.NavigateTo(Index.PageUrl);
+    }
+}

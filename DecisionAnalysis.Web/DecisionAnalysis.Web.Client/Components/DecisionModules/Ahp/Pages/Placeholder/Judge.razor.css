@@ -1,0 +1,11 @@
+﻿span.rate {
+    min-width: 66px;
+    display: inline-block;
+    text-align: center
+}
+span.des {
+    max-width: 100px;
+    min-width: 100px;
+    word-wrap: break-word;
+    text-align: center;
+}

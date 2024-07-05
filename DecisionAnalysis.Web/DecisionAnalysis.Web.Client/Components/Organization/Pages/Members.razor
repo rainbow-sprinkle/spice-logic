@@ -1,0 +1,91 @@
+﻿@using Microsoft.AspNetCore.Components.QuickGrid
+<div class="gap-xxl-4 p-xxl-4 d-flex flex-column">
+    <div class="d-flex  flex-row justify-content-between">
+        <h1 class="general-color">New invite</h1>
+        <div class="gap-xl-2 d-flex flex-row justify-content-center align-items-center">
+            <button class="btn-dark p-2" @onclick="OnDiscard">Discard</button>
+        </div>
+    </div>
+    <div class="general-board">
+        <div class="p-xxl-4 gap-xxl-3 d-flex flex-row justify-content-between">
+            <div class="form-group">
+                <input type="text" class="form-control" placeholder="Email">
+            </div>
+            <button class="btn-primary" @onclick="OnSendInvite">Send invite</button>
+        </div>
+    </div>
+    <div class="general-board">
+        <div class="gap-lg-2 p-xl-3">
+            <QuickGrid Items="@_allInvitees.AsQueryable()">
+                <PropertyColumn Property="@(p => p.InviteDateTime)" Title="Date and Time" />
+                <PropertyColumn Property="@(p => p.Email)" Title="Email Address" />
+                <PropertyColumn Property="@(p => p.OrganizationId)" Title="Organization No" />
+                <PropertyColumn Property="@(p => p.IsAccepted)" Title="Accepted Status" />
+            </QuickGrid>
+        </div>
+    </div>
+
+    <div class="general-board">
+        <div class="gap-lg-2 p-xl-3 d-flex flex-column">
+            <h2>Awaiting confirmation</h2>
+            <QuickGrid Items="@_allInvitees.AsQueryable()">
+                <PropertyColumn Property="@(p => p.InviteDateTime)" Title="Date and Time" />
+                <PropertyColumn Property="@(p => p.Email)" Title="Email Address" />
+                <PropertyColumn Property="@(p => p.OrganizationId)" Title="Organization No" />
+                <PropertyColumn Property="@(p => p.IsAccepted)" Title="Accepted Status" />
+            </QuickGrid>
+        </div>
+    </div>
+</div>
+
+@code {
+    private List<InviteInfo> _allInvitees = [];
+
+    // Define ProjectInfo as a record with positional parameters
+    public record InviteInfo(
+        DateTime InviteDateTime ,
+        string Email,
+        int OrganizationId,
+        bool IsAccepted
+    );
+
+    protected override async Task OnInitializedAsync()
+    {
+        List<InviteInfo> invites =
+        [
+            new InviteInfo(
+                new DateTime(1990, 1, 1, 8, 15, 0),
+                "aaa@gmail.com",
+                10,
+                true
+            ),
+
+            new InviteInfo(
+                new DateTime(1991, 1, 1, 8, 15, 0),
+                "bbb@gmail.com",
+                10,
+                true
+            ),
+
+            new InviteInfo(
+                new DateTime(1992, 1, 1, 8, 15, 0),
+                "vvv@gmail.com",
+                10,
+                true
+            )
+
+        ];
+        // Using the new with expression to initialize the record
+
+        _allInvitees = invites;
+    }
+
+    private void OnDiscard()
+    {
+        Console.WriteLine("Click Discard Button....");
+    }
+    private void OnSendInvite()
+    {
+        Console.WriteLine("Click Send invite Button.....");
+    }
+}

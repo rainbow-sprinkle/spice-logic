@@ -1,0 +1,38 @@
+﻿@page "/organization"
+@rendermode InteractiveServer
+
+<section class="tab-board">
+    <ul class="gap-md-3 px-lg-4 d-flex flex-row">
+        <li class="tab-item border-top-0 border-start-0 border-end-0 d-felx flex-row justify-content-center align-items-center @(tabIndex == 1 ? "active" : " ")" @onclick="_ => tabSelect(1)">Projects</li>
+        <li class="tab-item border-top-0 border-start-0 border-end-0 d-felx flex-row justify-content-center align-items-center @(tabIndex == 2 ? "active" : " ")" @onclick="_ => tabSelect(2)">Members</li>
+        <li class="tab-item border-top-0 border-start-0 border-end-0 d-felx flex-row justify-content-center align-items-center @(tabIndex == 3 ? "active" : " ")" @onclick="_ => tabSelect(3)">Pricing Plans</li>
+    </ul>
+</section>
+<section class="p-md-4">
+    @switch(tabIndex)
+    {
+        case 1:
+            <Project />
+            break;
+        case 2:
+            <Members />
+            break;
+        case 3:
+            <Plans />
+            break;
+    }
+</section>
+
+@code {
+
+    public const string PageUrl = "/organization";
+    public int tabIndex = 2;
+    public bool feedback_modal_state = false;
+
+    private void tabSelect(int index)
+    {
+        tabIndex = index;
+        StateHasChanged();
+    }
+ 
+}

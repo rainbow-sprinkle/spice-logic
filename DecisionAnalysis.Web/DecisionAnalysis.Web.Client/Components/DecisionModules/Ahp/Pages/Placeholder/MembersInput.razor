@@ -1,0 +1,29 @@
+﻿@rendermode InteractiveAuto
+
+<div class="font-10-color shadow" style="border: 1px solid gray; height: 98vh">
+    <div class="px-5 py-2 d-flex flex-row justify-content-between panel-header">
+        <div><b>Members</b></div>
+        <div><b>Relative Priority</b></div>
+    </div>
+    <div class="p-3 d-flex flex-column gap-3" style="min-height: 200px">
+        @for (var i = 1; i <= _count; i++)
+        {
+            <Member no=i />
+        }
+    </div>
+    <div class="d-flex flex-row justify-content-center gap-5">
+        <button class="btn-primary py-3 px-4 mt-5 gap-2 member-button" @onclick="() => {_count++;}">
+            <span class="icon-small d-flex align-items-center"><i class="fa fa-solid fa-plus"></i></span> <span>Add a member</span>
+        </button>
+        @if (_count >= 1)
+        {
+            <button class="btn-primary py-3 px-4 mt-5 gap-2 member-button" style="">
+                <span class="icon-small d-flex align-items-center"><i class="fa fa-solid fa-refresh"></i></span> <span>Reload</span>
+            </button>
+        }
+    </div>
+</div>
+
+@code {
+    private int _count = 0;
+}

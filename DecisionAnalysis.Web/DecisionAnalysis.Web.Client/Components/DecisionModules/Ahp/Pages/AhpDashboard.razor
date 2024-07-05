@@ -1,0 +1,243 @@
+﻿@page "/dashboard"
+@using DecisionAnalysis.Web.Client.Components.DecisionModules.Ahp.Pages.Placeholder
+@using Syncfusion.Blazor.Diagram.Overview
+@using Orientation = Syncfusion.Blazor.Layouts.Orientation
+@rendermode InteractiveAuto
+@inject NavigationManager navigationManager;
+
+<AhpMenu page="dashboard" />
+<div class="@(_evaluteModal ? "d-block" : "d-none") position-absolute modal-container evalute-modal">
+    <AhpEvalute modal="true" modalClose="@evaluteModalClose" getEnjoyValue="@getEnjoyValue" />
+</div>
+<div class="@(_modalState ? "d-block" : "d-none") position-absolute modal-container analyze-modal" style="z-index: 103 !important">
+    <div class="w-100 py-2 d-flex flex-row justify-content-center position-relative modal-header">
+        <b>One way sensitivity analysis</b>
+        <span role="button" class="position-absolute top-1 end-1 d-flex justify-content-center align-items-center icon-normal" @onclick="() => _modalState = false"><i class="fa fa-window-close"></i></span>
+    </div>
+
+    <div class="py-1 px-2 w-100">
+        <p><span>Current @(_leftName)/@(_rightName) Ratio: </span> @(_left)/@(_right)</p>
+        <p><span>Decision Change Sensitivity: </span> 0%</p>
+    </div>
+</div>
+<SfSplitter Height="100%" Width="100%">
+    <SplitterPanes>
+        <SplitterPane Size="20%" Max="30%" Min="20%">
+            <ContentTemplate>
+                <RibbonSider Type="0" />
+            </ContentTemplate>
+        </SplitterPane>
+        <SplitterPane Size="@(_leftBarState ? "50%" : "80%")" Max="@(_leftBarState ? "50%" : "80%")" Min="@(_leftBarState ? "30%" : "80%")">
+            <ContentTemplate>
+                <div class="h-100 position-relative w-100 pt-3">
+                    <div class="ms-3 @(_leftBarState ? "me-3" : "me-5") panel-shadow h-100" >
+                        @if (_manageState)
+                        {
+                            <SfSplitter Height="100%" Width="100%" Orientation="Orientation.Vertical">
+                                <SplitterPanes>
+                                    <SplitterPane Size="@(_downBarState ? "50%" : "100%")">
+                                        <ContentTemplate>
+                                            <AhpDiagram />
+                                            <div class="position-relative h-100">
+                                                <div class="@(_downBarState ? "d-none" : "d-block") w-100 d-flex flex-row justify-content-between py-2 px-3 position-absolute bottom-0 horizontal-line-bar" @onclick='() => _downBarState = true'>
+                                                    <span><b>Priority Trade-offs</b></span>
+                                                    <span class="icon-small"><i class="fa fa-solid fa-chevron-up"></i></span>
+                                                </div>
+                                            </div>
+                                        </ContentTemplate>
+                                    </SplitterPane>
+                                    <SplitterPane Size="@(_downBarState ? "50%" : "0%")" Visible="@_downBarState">
+                                        <ContentTemplate>
+                                            <div class="h-100 position-relative">
+                                                <div class="w-100 d-flex flex-row justify-content-between py-2 px-3 position-absolute top-0 horizontal-line-bar" @onclick='() => _downBarState = false'>
+                                                    <span><b>Priority Trade-offs</b></span>
+                                                    <span class="icon-small"><i class="fa fa-solid fa-chevron-down"></i></span>
+                                                </div>
+                                                    @if (_priorityState)
+                                                    {
+                                                        <PriorityTrades />
+                                                    }
+                                                    else
+                                                    {
+                                                        <div class="w-100 px-5 d-flex justify-content-center align-items-center h-100">
+                                                            <p class="notice-paragraph"><b>There cannot be any pairwise comparison for the selected criterion. If a node contains at least 2 criteria, you can select the parent node of that criteria and perform pairwise comparisons here.</b></p>
+                                                        </div>
+                                                    }
+                                            </div>
+                                        </ContentTemplate>
+                                    </SplitterPane>
+                                </SplitterPanes>
+                            </SfSplitter>
+                        }
+                        else if(_manageState == false)
+                        {
+                            <div class="w-100 h-100 border border-1 panel-inner-border-color">
+                                <div class="d-flex bar-bg-color panel-header">
+                                    <div class="px-4 py-1" style="width: 80%"><b>Criteria</b></div>
+                                    <div class="px-2 py-1" style="width: 20%"><b>Attributes</b></div>
+                                </div>
+                                <div class="mt-3 d-flex" style="min-height:80%">
+                                    <div style="width: 60%">
+                                        <CriteriaItemJudge No=1 ModalOpen="@evaluteModalOpen" Value="@_enjoyValue"/>
+                                    </div>
+                                    <div style="width: 40%">
+                                        <AhpChart Items="@_items" Values="@_values" type="circle" />
+                                    </div>
+                                </div>
+                                <div class="d-flex flex-row justify-content-center gap-3">
+                                    <button class="btn-primary py-2 px-4 secondary-button dashboard-button" @onclick='() => {navigationManager.NavigateTo("ahp_add_another_criteria/parent/0/0");}'>Add another Criterion</button>
+                                    <button class="btn-primary py-2 px-4 secondary-button dashboard-button" @onclick='() => onManageCriteria()'>Manage Criteria </button>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                    <div class="@(_leftBarState ? "d-none" : "d-block") h-100 d-flex flex-row justify-content-center position-absolute top-0 h-100 d-flex double-border vertical-line-bar" style="right: 24px;" role="button" @onclick="() => _leftBarState = true">
+                        <span class="icon-small"><i class="fa fa-solid fa-chevron-left"></i></span>
+                    </div>
+                    <div role="button" class="@(_leftBarState ? "d-none" : "d-block") @(_leftTab == "options" ? "active" : "") position-absolute top-0 end-0 vertical-tab-header-btn" style="transform: translate(40%, 225%) rotate(90deg);" @onclick='() => {_leftBarState = true;_leftTab = "options";}'>Options Analyzer</div>
+
+                    @if (_manageState)
+                    {
+                        <div role="button" class="@(_leftBarState ? "d-none" : "d-block") @(_leftTab == "sensitivity" ? "active" : "") position-absolute top-0 end-0 vertical-tab-header-btn" style="transform: translate(40%, 808%) rotate(90deg);" @onclick='() => {_leftBarState = true;_leftTab = "sensitivity";}'>Sensitivity Analyzer</div>
+                        <div role="button" class="@(_leftBarState ? "d-none" : "d-block") @(_leftTab == "diagram" ? "active" : "") position-absolute top-0 end-0 vertical-tab-header-btn" style="transform: translate(40%, 1422%) rotate(90deg);" @onclick='() => {_leftBarState = true;_leftTab = "diagram";}'>Diagram Navigator</div>
+                    }
+                    else if (_manageState == false)
+                    {
+                        <div role="button" class="@(_leftBarState ? "d-none" : "d-block") @(_leftTab == "sensitivity" ? "active" : "") position-absolute top-0 end-0 vertical-tab-header-btn" style="transform: translate(40%, 808%) rotate(90deg);" @onclick='() => {_leftBarState = true;_leftTab = "sensitivity";}'>Sensitivity Analyzer</div>
+                    }
+                </div>
+            </ContentTemplate>
+        </SplitterPane>
+        <SplitterPane Size="@(_leftBarState ? "30%" : "0%")" Min="@(_leftBarState ? "30%" : "0%")" Max="@(_leftBarState ? "60%" : "0%")">
+            <ContentTemplate>
+                <div class="d-flex flex-row position-relative pe-3 h-100">
+                    <div class="h-100 d-flex flex-row justify-content-center double-border border-end-0 vertical-line-bar" role="button" @onclick="() => _leftBarState = false">
+                        <span class="icon-small"><i class="fa fa-solid fa-chevron-right"></i></span>
+                    </div>
+                        @if (_leftTab == "options")
+                        {
+                            <OptionAnalyzer />
+                        }
+                        else if (_leftTab == "sensitivity")
+                        {
+                            <SensitivityAnalyzer OpenModal="ModalOpen"/>
+                        }
+                        else if (_leftTab == "diagram")
+                        {
+                            <div class="pe-1 vertical-tab-content-container">
+                                <div class="h-100 double-border border-start-0 bar-bg-color">
+                                    <div class="diagram-zoom-panel-container">
+                                        <SfDiagramOverviewComponent Height="100%" Width="100%" SourceID="element"></SfDiagramOverviewComponent>
+                                    </div>
+                                    <div class="d-flex flex-column justify-content-between w-100 diagram-zoom-panel-control-container">
+                                        <div class="d-flex ps-2 diagram-zoom-panel-control-item">
+                                            <span><i class="fa-solid fa-magnifying-glass"></i></span>
+                                            <input type="range" min="0" max="100" style="width: 55%"/>
+                                            <span><i class="fa-solid fa-magnifying-glass"></i></span>
+                                            <span><i class="fa-solid fa-arrows-up-down-left-right"></i></span>
+                                        </div>
+                                        <div class="d-flex ps-2 diagram-zoom-panel-control-item">
+                                            <span><i class="fa-solid fa-arrows-left-right-to-line"></i></span>
+                                            <input type="range" min="0" max="100" style="width: 65%" />
+                                            <span><i class="fas fa-undo"></i></span>
+                                        </div>
+                                        <div class="d-flex ps-2 diagram-zoom-panel-control-item">
+                                            <span><i class="fa-solid fa-arrows-up-down"></i></span>
+                                            <input type="range" min="0" max="100" style="width: 65%" />
+                                            <span><i class="fas fa-undo"></i></span>
+                                        </div>
+                                        <div class="d-flex ps-2 diagram-zoom-panel-control-item">
+                                            <span><i class="fa fa-solid fa-left-right"></i></span>
+                                            <input type="range" min="0" max="100" style="width: 65%" />
+                                            <span><i class="fas fa-undo"></i></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                        <div role="button" class="@(_leftTab == "options" ? "active" : "") position-absolute top-0 end-0 vertical-tab-header-btn" style="transform: translate(40%, 225%) rotate(90deg);" @onclick='() => {_leftTab = "options";}'>Options Analyzer</div>
+
+                        @if (_manageState)
+                        {
+                            <div role="button" class="@(_leftTab == "sensitivity" ? "active" : "") position-absolute top-0 end-0 vertical-tab-header-btn" style="transform: translate(40%, 808%) rotate(90deg);" @onclick='() => {_leftTab = "sensitivity";}'>Sensitivity Analyzer</div>
+                            <div role="button" class="@(_leftTab == "diagram" ? "active" : "") position-absolute top-0 end-0 vertical-tab-header-btn" style="transform: translate(40%, 1422%) rotate(90deg);" @onclick='() => {_leftBarState = true;_leftTab = "diagram";}'>Diagram Navigator</div>
+                        }
+                        else if (_manageState == false)
+                        {
+                            <div role="button" class="@(_leftTab == "sensitivity" ? "active" : "") position-absolute top-0 end-0 vertical-tab-header-btn" style="transform: translate(40%, 808%) rotate(90deg);" @onclick='() => {_leftTab = "sensitivity";}'>Sensitivity Analyzer</div>
+                        }
+
+                </div>
+            </ContentTemplate>
+        </SplitterPane>
+    </SplitterPanes>
+</SfSplitter>
+
+@code {
+
+    private bool _optionState = true;
+    private bool _sensitiveState = true;
+    private string _leftTab = "options";
+    private bool _manageState;
+    private bool _downBarState = true;
+    private bool _leftBarState = true;
+    private bool _priorityState = false;
+    private bool _evaluteModal;
+    private double _enjoyValue = 1;
+    private void getEnjoyValue(double value)
+    {
+        _enjoyValue = value;
+        StateHasChanged();
+    }
+    private void evaluteModalClose()
+    {
+        _evaluteModal = false;
+        _modalState = false;
+        StateHasChanged();
+    }
+    private void evaluteModalOpen()
+    {
+        _evaluteModal = true;
+        StateHasChanged();
+    }
+    private void onManageCriteria()
+    {
+        _manageState = true;
+    }
+
+    private List<string> _items = ["abc", "def"];
+    private List<double> _values = [0.3, 1];
+
+    private int _left = 1;
+    private int _right = 1;
+    private string _leftName;
+    private string _rightName;
+    private int _index;
+    private bool _modalState;
+    private bool _matrixModalState;
+
+    private void chartValues(int left, int right)
+    {
+        _left = left;
+        _right = right;
+        var numL = 100.0 / (left + right) * left;
+        var numR = 100.0 / (left + right) * right;
+        _values[0] = numL;
+        _values[1] = numR;
+        _index++;
+        StateHasChanged();
+    }
+    private void modalShow(string leftName, string rightName)
+    {
+        _leftName = leftName;
+        _rightName = rightName;
+        _modalState = true;
+        StateHasChanged();
+    }
+    private void ModalOpen()
+    {
+        _evaluteModal = true;
+        _modalState = true;
+        StateHasChanged();
+    }
+}

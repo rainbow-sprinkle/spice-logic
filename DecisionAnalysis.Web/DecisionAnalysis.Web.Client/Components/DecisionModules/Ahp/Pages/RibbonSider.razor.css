@@ -1,0 +1,12 @@
+﻿.active {
+    background: white !important;
+}
+.sidebar {
+    background: rgb(167,182,182);
+    background: linear-gradient(to left, rgba(167,182,182,1) 0%, rgba(215,227,227,1) 4%, rgba(215,227,224,1) 100%);
+}
+
+.sidebar-item {
+    background: rgb(167,182,182);
+    background: linear-gradient(to left, rgba(167,182,182,1) 0%, rgba(221,236,236,1) 4%, rgba(215,227,224,1) 100%);
+}

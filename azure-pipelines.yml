@@ -1,0 +1,62 @@
+﻿trigger: none
+
+pool:
+  name: On Premise Pool
+  demands:
+  - msbuild
+  - visualstudio
+
+variables:
+  solution: '**\*.sln'
+
+steps:
+- task: NuGetToolInstaller@0
+  displayName: 'Use NuGet 6.0.0'
+  inputs:
+    versionSpec: 6.0.0
+
+- task: NuGetCommand@2
+  displayName: 'NuGet restore'
+  inputs:
+    restoreSolution: '$(solution)'
+    vstsFeed: '2d5a97dd-8956-4ed8-8f9f-743214bcd19b'
+
+- powershell: |
+   # Write your PowerShell commands here.
+   
+   Write-Host " system.defaultworkingdirectory is  $(system.defaultworkingdirectory)"
+   Write-Host "WebServerArtificatsFolder is $(WebServerArtificatsFolder)"
+    
+   
+  displayName: 'PowerShell Script'
+
+- task: CopyFiles@2
+  displayName: 'Put the Web Server Offline and create delay to avoid file locking'
+  inputs:
+    SourceFolder: '$(Build.SourcesDirectory)'
+    Contents: 'app_offline.htm'
+    TargetFolder: '$(WebServerProductionFolder)'
+
+- script: |
+    dotnet --version
+    dotnet workload install wasm-tools
+  displayName: 'Install wasm-tools workload'
+
+- task: VSBuild@1
+  inputs:
+    solution: '$(solution)'
+    msbuildArgs: '/p:DeployOnBuild=true /p:SkipInvalidConfigurations=true'
+    platform: 'any cpu'
+    configuration: 'release'
+
+- task: DeleteFiles@1
+  displayName: 'Delete Existing Files In WebServer Production'
+  inputs:
+    SourceFolder: '$(WebServerProductionFolder)'
+    Contents: '**'
+
+- task: CopyFiles@2
+  displayName: 'Publish (Copy) WebServer To Production'
+  inputs:
+    SourceFolder: '$(WebServerArtificatsFolder)'
+    TargetFolder: '$(WebServerProductionFolder)'

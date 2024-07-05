@@ -1,0 +1,46 @@
+﻿<div class="d-flex align-items-center" style="gap: 15px">
+    <div>@no.</div>
+    <div class="form-check">
+        <input class="form-check-input" name="weightCalcMethod" type="checkbox">
+    </div>
+    <div class="d-flex flex-row justify-content-between align-items-center pe-3 position-relative" style="width: 40%" @onmouseover="_ => {hoverState = true;}" @onmouseout="_ => {hoverState = false;}">
+        <div class="S-content">New Member @no</div>
+    
+        <div class="position-relative" @onfocusout="() => setState = false">
+            <span class="@(hoverState == false ? "d-none" : "d-block") dot font-black-color d-flex justify-content-center align-items-center icon-small" @onmouseover="_ => {hoverState = true;}" @onclick="() => {setState = !setState;}">
+                <i class="fa fa-solid fa-ellipsis-vertical"></i>
+            </span>
+
+            <div class="@(setState ? "d-flex" : "d-none") flex-row p-1 position-absolute bg-white member-item-menu" >
+                <div class="d-flex flex-column pe-2" style="border-right: 1px solid gray">
+                    <span role="button" class="icon-small"><i class="fa fa-solid fa-pen"></i></span>
+                    <span role="button" class="icon-small" style="margin-top: 9px"><i class="fa fa-solid fa-trash"></i></span>
+                </div>
+                <div class="d-flex flex-column ps-2 pe-3">
+                    <span role="button">Edit</span>
+                    <span role="button">Delete</span>
+                </div>
+            </div>
+            
+        </div>
+        
+    </div>
+    <div class="d-flex justify-content-center" style="width: 50%">
+        <input type="text" class="w-100">
+    </div>
+    <div>
+        <input type="file" id="upload" hidden />
+        <label for="upload" class="border border-1 border-gray-color" style="padding: 2.3px 7px">...</label>
+    </div>
+    <div class="view d-flex justify-content-center align-items-center border border-1 border-gray-color" style="padding: 5px">
+        <span class="d-flex justify-content-center align-items-center icon-small"><i class="fa fa-solid fa-eye"></i></span>
+    </div>
+    <InputSlider />
+</div>
+
+@code {
+    [Parameter]
+    public int no{ get; set; }
+    private bool hoverState = false;
+    private bool setState = false;
+}

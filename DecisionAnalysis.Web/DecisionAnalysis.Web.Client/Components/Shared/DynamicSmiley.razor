@@ -1,0 +1,37 @@
+﻿ <div style="width:@Width" class="happiness-smiley">
+    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="50" cy="50" r="45" stroke="@StrokeColor" stroke-width="4" fill="@FaceColor" />
+        <circle cx="35" cy="40" r="5" fill="black" />
+        <circle cx="65" cy="40" r="5" fill="black" />
+        <path d="@MouthPath" stroke="black" stroke-width="4" fill="transparent" />
+    </svg>
+</div>
+
+@code {
+    [Parameter]
+    public decimal Happiness { get; set; }
+
+    [Parameter]
+    public string FaceColor { get; set; } = "yellow";
+
+    [Parameter]
+    public string StrokeColor { get; set; } = "black";
+
+    [Parameter] 
+    public string Width { get; set; } = "32px";
+
+    private string MouthPath
+    {
+        get
+        {
+            // Invert the mapping so that higher happiness values create a happier smiley
+            double mappedValue = MapValue(Happiness, 0, 100, 20, -20);
+            return $"M 30,60 Q 50,{60 + mappedValue} 70,60";
+        }
+    }
+
+    private static double MapValue(decimal value, decimal fromSource, decimal toSource, decimal fromTarget, decimal toTarget)
+    {
+        return (double)((value - fromSource) / (toSource - fromSource) * (toTarget - fromTarget) + fromTarget);
+    }
+}

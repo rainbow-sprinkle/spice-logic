@@ -1,0 +1,13 @@
+﻿[
+  {
+    "outputFile": "wwwroot/styles/app.css",
+    "inputFile": "wwwroot/styles/app.scss",
+    "options": {
+      "sourceMap": true
+    }
+  },
+  {
+    "outputFile": "wwwroot/bootstrap-5.3.2/scss/bootstrap.css",
+    "inputFile": "wwwroot/bootstrap-5.3.2/scss/bootstrap.scss"
+  } 
+]

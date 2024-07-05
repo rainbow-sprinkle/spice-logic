@@ -1,0 +1,60 @@
+﻿<div class="pe-1" style="width: @(Show ? "93%" : "92%")">
+    <div class="h-100 double-border border-start-0">
+        <div>
+            <div class="d-flex flex-row justify-content-between px-2 py-1 accordion_title" role="button" @onclick="() => {_optionState = !_optionState;}">
+                <span>Recommendation</span>
+                <span class="icon-small"><i class="fa fa-solid fa-chevron-up"></i></span>
+            </div>
+            @if (_optionState)
+            {
+                <ul>
+                    <li>All options have the same priority values, so you can be indifferent between all of these options.</li>
+                </ul>
+            }
+            @if (Show)
+            {
+       @*         <AhpChart Title="Priorities" Items="@Items" Values="@Values" type="bar" />*@
+                <div class="w-100 d-flex flex-row justify-content-center">
+                    <div class="d-flex align-items-center flex-column justify-content-center">
+                        <div class="control-container">
+                            <SfCarousel>
+                                <CarouselItem>
+                                    <AhpChart Title="Priorities" Items="@_items" Values="@_values" type="bar" />
+                                </CarouselItem>
+                                <CarouselItem>
+                                    <AhpChart Title="Priorities" Items="@_items" Values="@_values" type="circle" />
+                                </CarouselItem>
+                                <CarouselItem>
+                                    <AhpChart Title="Priorities" Items="@_items" Values="@_values" type="polar" />
+                                </CarouselItem>
+                            </SfCarousel>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+<style>
+    .control-container {
+        background-color: #adb5bd;
+        height: 390px;
+        margin: 0 auto;
+        width: 330px;
+    }
+
+    .e-carousel .slide-content {
+        align-items: center;
+        display: flex;
+        height: 100%;
+        justify-content: center;
+    }
+</style>
+
+@code {
+    private bool _optionState = true;
+    private List<string> _items = ["abc", "def", "ghi"];
+    private List<double> _values = [0.3, 1, 0.6];
+    [Parameter]
+    public bool Show { get; set; } = true;
+}

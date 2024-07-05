@@ -1,0 +1,106 @@
+﻿@page "/new_options/{type}"
+@using DecisionAnalysis.Web.Client.Components.DecisionModules.Ahp.Pages.Placeholder
+@rendermode InteractiveAuto
+@inject NavigationManager navigationManager;
+<AhpMenu page="options" />
+
+<div class="w-100 mt-4 px-4 panel-outer">
+    <div class="border border-1 panel-inner-border-color panel-inner panel-shadow">
+        <SfSplitter Height="100%" Width="100%">
+            <SplitterPanes>
+                <SplitterPane Size="@(_newState ? "100%" : "80%")" Max="@(_newState ? "100%" : "80%")" Min="@(_newState ? "100%" : "80%")">
+                    <ContentTemplate>
+                        <div class="position-relative panel_bg_color h-100">
+                                @if (_newState)
+                                {
+                                    <div class="d-flex flex-row justify-content-center align-items-center h-100 w-100 ">
+                                        <button class="d-flex flex-column p-3 justify-content-center align-items-center big-button" @onclick='() => {_newState = false;}'>
+                                            <span class="icon-big"><i class="fa fa-solid fa-plus"></i></span>
+                                            <span>Add New Option</span>
+                                        </button>
+                                    </div>
+                                }
+                                @if (_setOptionState == false && _newState == false)
+                                {
+                                    <p class="panel-title text-center pt-5"><b>Enter your Options</b></p>
+
+                                    <div class="d-flex justify-content-center gap-3 align-items-center p-5">
+                                        <input type="text" class="form-control w-50" placeholder="New Option">
+                                        <span><i class="fa fa-solid fa-plus"></i></span>
+                                    </div>
+                                    <div class="d-flex justify-content-center w-20 gap-2 pt-3">
+                                        <button class="btn-primary py-3 px-4 mt-5 primary-button" @onclick='onProceed'>Proceed</button>
+                                        <button class="btn-primary py-3 px-4 mt-5 secondary-button" >Cancel</button>
+                                    </div>
+                                }
+                            
+                                else if (_setOptionState)
+                                {
+                                    <AhpEvalute getEnjoyValue=@getEnjoyValue />
+                                }
+                            </div>
+                        @if(_setOptionState)
+                        {
+                            <div class="d-flex justify-content-center w-20 gap-2 pt-3">
+                                @if (_finishState)
+                                {
+                                    <button class="btn-primary py-3 px-5 mt-5 primary-button" @onclick='() => navigationManager.NavigateTo("dashboard")'>Finish</button>
+                                }
+                                else
+                                {
+                                    <button class="btn-primary py-3 px-5 mt-5 primary-button" @onclick='() => _finishState = true'>Next</button>
+                                    <button class="btn-primary py-3 px-5 mt-5 secondary-button" @onclick='() => navigationManager.NavigateTo("dashboard")'>Close</button>
+                                }
+                                
+                            </div>
+                        }
+                    </ContentTemplate>
+                </SplitterPane>
+                <SplitterPane Size="@(_newState ? "0%" : "20%")" Max="@(_newState ? "0%" : "20%")" Min="@(_newState ? "0%" : "20%")">
+                    <ContentTemplate>
+                        <div class="d-flex flex-row position-relative pe-3 h-100">
+                            <div class="position-absolute w-100 h-100 modal-background" style="z-index:103;"></div>
+                            <div class="h-100 d-flex flex-row justify-content-center double-border border-end-0 vertical-line-bar" role="button">
+                                <span class="icon-small"><i class="fa fa-solid fa-chevron-right"></i></span>
+                            </div>
+                            @if (_leftTab == "options")
+                            {
+                                <OptionAnalyzer Show=false/>
+                            }
+                            <div role="button" class="@(_leftTab == "options" ? "active" : "") position-absolute top-0 end-0 vertical-tab-header-btn" style="transform: translate(43%, 225%) rotate(90deg);" @onclick='() => {_leftTab = "options";}'>Options Analyzer</div>
+                        </div>
+                    </ContentTemplate>
+                </SplitterPane>
+            </SplitterPanes>
+        </SfSplitter>
+    </div>
+</div>
+
+@code {
+    private bool _setOptionState;
+    private bool _barChatState = true;
+    private bool _nextState = false;
+    private bool _newState;
+    private bool _finishState;
+
+    private string _leftTab = "options";
+
+    [Parameter]
+    public string type{ get; set; }
+
+    private void onProceed()
+    {
+        if (type == "new") navigationManager.NavigateTo("dashboard");
+        else _setOptionState = true;
+    }
+
+    private void getEnjoyValue(double value)
+    {
+        
+    }
+
+    protected override void OnInitialized()
+    {
+        if (type == "new") _newState = true;
+    }
+}

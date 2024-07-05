@@ -1,0 +1,11 @@
+﻿<SectionContent SectionId="ScriptOutlet.Sections.Scripts">
+    @ChildContent
+</SectionContent>
+
+@code {
+    /// <summary>
+    /// Gets or sets the content to be rendered in <see cref="HeadOutlet"/> instances.
+    /// </summary>
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+}

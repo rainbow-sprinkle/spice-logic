@@ -1,0 +1,149 @@
+﻿@page "/ahp_add_another_criteria/{Place}/{Id}/{Name}"
+@using DecisionAnalysis.Web.Client.Components.DecisionModules.Ahp.Pages.Placeholder
+@using DecisionAnalysis.Web.Client.Components.Service
+@rendermode InteractiveAuto
+@inject NavigationManager navigationManager;
+@inject AhpStateContainerService ahpStateService;
+
+<div>
+    <AhpMenu page="add-another-criteria" />
+    <div class="w-100 mt-4 px-4 panel-outer">
+        <div class="border border-1 panel-inner-border-color h-100 panel-shadow panel-inner">
+            <SfSplitter Height="100%" Width="100%">
+                <SplitterPanes>
+                    <SplitterPane Size="@(_barState ? "70%" : "100%")" Max="@(_barState ? "70%" : "100%")" Min="0%">
+                        <ContentTemplate>
+                            <div class="position-relative h-100">
+                                @if (_step == -1)
+                                {
+                                    @if (Place == "parent")
+                                    {
+                                        <CriteriaParentAdd Add="OnAdd" Cancel="OnCancel" First=true />
+                                    }
+                                    else if (Place == "child")
+                                    {
+                                        <CriteriaChildAdd Add="OnChildAdd" Cancel="OnCancel" Id="@Id" Name="@Name" First=true />
+                                    }
+                                    else
+                                    {
+                                        <CriteriaParentAdd Add="OnAdd" Cancel="OnCancel" First=false />
+                                    }
+                                }
+                                else
+                                {
+                                    <CriteriaChildAdd @key="_step" StepP="@_step" Add="OnChildAdd" Cancel="OnCancel" Id="@_addedIds[_step]" Name="@_addedNames[_step]" First=false />
+                                }
+
+                                <div class="@(_barState ? "d-none" : "d-block") h-100 d-flex flex-row justify-content-center position-absolute top-0 d-flex vertical-line-bar double-border" style="right: 24px" role="button" @onclick="() => _barState = true">
+                                    <span class="icon-small"><i class="fa fa-solid fa-chevron-left"></i></span>
+                                </div>
+                                <div role="button" class="@(_barState ? "d-none" : "d-block") @(_verticalTab == "options" ? "active" : "") position-absolute top-0 end-0 vertical-tab-header-btn" style="transform: translate(40%, 225%) rotate(90deg);" @onclick='() => {_barState = true;_verticalTab = "criterias";}'>Already Added Criteria</div>
+                            </div>
+                        </ContentTemplate>
+                    </SplitterPane>
+                    <SplitterPane Size="@(_barState ? "30%" : "0%")" Max="@(_barState ? "30%" : "0%")" Min="0%">
+                        <ContentTemplate>
+                            <div class="d-flex flex-row position-relative pe-3 h-100">
+                                <div class="h-100 d-flex flex-row justify-content-center double-border vertical-line-bar border-end-0" role="button" @onclick="() => _barState = false">
+                                    <span class="icon-small"><i class="fa fa-solid fa-chevron-right"></i></span>
+                                </div>
+
+                                <div class="pe-1 vertical-tab-content-container">
+                                    @if (_verticalTab == "criterias")
+                                    {
+                                        <div class="h-100 double-border border-start-0">
+                                            <Tree @key="_step" />
+                                        </div>
+                                    }
+                                </div>
+
+                                <div role="button" class="@(_verticalTab == "criterias" ? "active" : "") position-absolute top-0 end-0 vertical-tab-header-btn" style="transform: translate(43%, 225%) rotate(90deg);" @onclick='() => _verticalTab = "criterias"'>Already Added Criteria</div>
+                            </div>
+                        </ContentTemplate>
+                    </SplitterPane>
+                </SplitterPanes>
+            </SfSplitter>
+        </div>
+    </div>
+</div>
+
+@code {
+    private string _verticalTab = "criterias";
+    private string _currentCriteria = "";
+    private bool _warnState;
+    private bool _subState = false;
+    private bool _barState = true;
+    private bool _barChatState = true;
+    private int _setPref;
+    private List<Tree.CriteriaData> _treeDatas = [];
+
+    private void AddCriteria()
+    {
+        if (_currentCriteria == "")
+        {
+            _warnState = true;
+            return;
+        }
+
+        _setPref = 0;
+    }
+
+    [Parameter]
+    public string Place{ get; set; }
+    [Parameter]
+    public string? Id{ get; set; }
+    [Parameter]
+    public string? Name{ get; set; }
+    private List<string> _addedIds = []; 
+    private List<string> _addedNames = [];
+    private int _step = -1;
+
+    protected override Task OnInitializedAsync()
+    {
+        return base.OnInitializedAsync();
+    }
+
+    private void OnAdd(string name)
+    {
+        ahpStateService.TreeDatas.Add(new Tree.CriteriaData
+            {
+                Id = (ahpStateService.TreeDatas.Count + 1).ToString(),
+                HasChild = true,
+                Name = name
+            });
+
+        _addedIds.Add(ahpStateService.TreeDatas.Count.ToString());
+        _addedNames.Add(name);
+        _step++;
+        StateHasChanged();
+    }
+
+    private void OnChildAdd( string Id, string name)
+    {
+
+        ahpStateService.TreeDatas.Add(new Tree.CriteriaData
+            {
+                Id = (ahpStateService.TreeDatas.Count + 1).ToString(),
+                HasChild = true,
+                Pid = Id,
+                Name = name
+            });
+
+        _addedIds.Add(ahpStateService.TreeDatas.Count.ToString());
+        _addedNames.Add(name);
+        _step++;
+        StateHasChanged();
+    }
+
+    private void OnCancel()
+    {
+        if(_step == -1)
+        {
+            navigationManager.NavigateTo("/criteria_proceed");
+            return;
+        }
+
+        _step--;
+        StateHasChanged();
+    }
+}

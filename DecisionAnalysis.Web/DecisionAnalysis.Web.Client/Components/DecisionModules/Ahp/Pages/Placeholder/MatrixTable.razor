@@ -1,0 +1,61 @@
+﻿
+@rendermode InteractiveAuto
+
+<div class="d-flex flex-column">
+    @for (var i = 0; i <= Items.Count; i++)
+    {
+        if(i == 0)
+        {
+            <div class="d-flex">
+                @for (var j = 0; j <= Items.Count; j++)
+                {
+                    if(j == 0)
+                    {
+                        <div class="item item-header"></div>
+                    }
+                    else
+                    {
+                        <div class="item item-header">@(Items[j - 1])</div>
+                    }
+                }
+            </div>
+        }
+        else
+        {
+            <div class="d-flex">
+                @for (var j = 0; j <= Items.Count; j++)
+                {
+                    if (j == 0)
+                    {
+                        <div class="item item-header">@(Items[i - 1])</div>
+                    }
+                    else
+                    {
+                        if(i != j)
+                        {
+                            <div role="button" class="item" @onclick="() => OnClick()">@(Values[i - 1][j - 1])</div>
+                        }
+                        else
+                        {
+                            <div class="item">@(Values[i - 1][j - 1])</div>
+                        }
+                    }
+                }
+            </div>
+        }
+    }
+</div>
+
+@code {
+    [Parameter]
+    public List<string> Items { get; set; }
+    [Parameter]
+    public List<List<double>>Values{ get; set;}
+    [Parameter]
+    public Action OpenModal{ get; set; }
+
+    private void OnClick()
+    {
+        OpenModal?.Invoke();
+    }
+}

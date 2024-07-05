@@ -1,0 +1,50 @@
+﻿<div class="d-flex flex-row border-bottom ribbon-menu-minheight S-content">
+    <div class="d-flex flex-column w-1d3 ps-4 border-end pt-3 justify-content-between">
+        <div class="d-flex flex-row gap-3">
+            <div class="form-check">
+                <input class="form-check-input" name="weightCalcMethod" type="radio" id="approximate">
+                <label class="form-check-label" for="approximate">
+                    Approximate Eigenvector
+                </label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" name="weightCalcMethod" type="radio" id="fuzzygeometric">
+                <label class="form-check-label" for="fuzzygeometric">
+                    Fuzzy Geometric Mean
+                </label>
+            </div>
+        </div>
+        <div>
+            <div class="form-check">
+                <input class="form-check-input" name="weightCalcMethod" type="radio" id="geometricmean">
+                <label class="form-check-label" for="geometricmean">
+                    Geometric mean
+                </label>
+            </div>
+        </div>
+        <div class="text-center">
+            Weight Calculation
+        </div>
+    </div>
+    <div class="w-1d3 ps-4 pt-3 border-end d-flex flex-column justify-content-between">
+        <div class="form-check">
+            <input class="form-check-input" name="optPrioCalcMethod" type="radio" id="weightedsum">
+            <label class="form-check-label" for="weightedsum">
+                Weighted Sum = ∑ (Weight * Attribute)
+            </label>
+        </div>
+        <div class="form-check">
+            <input class="form-check-input" name="optPrioCalcMethod" type="radio" id="weightproduct">
+            <label class="form-check-label" for="weightproduct">
+                Weighted Product = Π (Attribute ^ Weight)
+            </label>
+        </div>
+        <div class="text-center">
+            Option Priority Calculation
+        </div>
+    </div>
+</div>
+
+@code {
+
+}

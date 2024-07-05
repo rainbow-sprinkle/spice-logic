@@ -1,0 +1,36 @@
+﻿@page "/problem"
+@rendermode InteractiveAuto
+
+<AhpMenu page="problem" />
+
+<div class="border border-1 border-gray-color m-3 font-10-color" style="height: 100vh">
+
+    @if (edit == false)
+    {
+        <div class="px-5 py-2 d-flex flex-row justify-content-end gap-3">
+            <span role="button" class="icon-small" @onclick='() => {edit = true;}'><i class="fa fa-solid fa-pen"></i></span>
+            <span role="button" class="icon-small"><i class="fa fa-solid fa-trash"></i></span>
+        </div>
+    }
+    else
+    {
+        <div class="px-5 py-2 d-flex flex-row justify-content-between">
+            <div><strong>Problem Statement</strong></div>
+            <span role="button" class="icon-small" @onclick='() => {edit = false;}'><i class="fa fa-solid fa-minus"></i></span>
+        </div>
+        <div class="px-5 py-2">
+            <input class="w-100" />
+        </div>
+        <div class="px-5 py-2 d-flex flex-row justify-content-between">
+            <div><strong>Description</strong></div>
+
+        </div>
+        <div class="px-5 py-2" style="height: 500px">
+            <textarea class="w-100 h-100" />
+        </div>
+    }
+</div>
+
+@code {
+    private bool edit;
+}

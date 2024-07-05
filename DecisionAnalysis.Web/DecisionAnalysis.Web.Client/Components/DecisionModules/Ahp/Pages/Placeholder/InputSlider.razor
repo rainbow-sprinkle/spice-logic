@@ -1,0 +1,27 @@
+﻿@rendermode InteractiveAuto
+@using ChangeEventArgs = Microsoft.AspNetCore.Components.ChangeEventArgs
+
+<div class="position-relative" @onfocusout="() => _sliderShow = false" @onfocusin="() => _sliderShow = !_sliderShow">
+	<input class="inputNumber" type="number" min="0" max="100" @bind="@_inputNumber" @oninput="OnNumberInput" />
+
+	<div class="@(_sliderShow ? "d-block" : "d-none") position-absolute start-0 bg-white" style="top: 32px; border:2px solid; padding: 3px; padding-top: 5px;z-index: 100">
+		<input type="range" min="0" max="100" @bind="@_rangeNumber" @oninput="OnRangeInput" @onclick='() => _sliderShow = true'/>
+	</div>
+</div>
+
+@code {
+	private int _rangeNumber { get; set; } = 10 ;
+	private int _inputNumber { get; set; } = 10 ;
+	private bool _sliderShow = false;
+
+	private void OnNumberInput(ChangeEventArgs e)
+	{
+		_rangeNumber = int.Parse(e.Value?.ToString() ?? string.Empty);
+	}
+
+	private void OnRangeInput(ChangeEventArgs e)
+	{
+		_sliderShow = true; 
+		_inputNumber = int.Parse(e.Value?.ToString() ?? string.Empty);
+	}
+}

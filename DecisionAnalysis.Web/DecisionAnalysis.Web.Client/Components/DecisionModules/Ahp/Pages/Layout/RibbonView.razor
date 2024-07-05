@@ -1,0 +1,41 @@
+﻿@rendermode InteractiveAuto
+@inject NavigationManager navigationManager;
+
+<div class="border-bottom ribbon-menu-minheight d-flex flex-row">
+    <div class="d-flex flex-row justify-content-between border-end p-3">
+        @if(state == 0)
+        {
+            <button class="ribbonBtn border-0 bg-white-color d-flex flex-column justify-content-start gap-2" @onclick='() => {navigationManager.NavigateTo("/dashboard");}'>
+                <img src="./images/criteria.png" width="30" height="30" />
+                Criteria
+            </button>
+        }
+        else if(state == 1)
+        {
+            <button class="ribbonBtn border-0 bg-white-color d-flex flex-column justify-content-center gap-2" @onclick='() => {navigationManager.NavigateTo("/problem");}'>
+                <img src="./images/problem.png" width="30" height="30" />
+                Problem
+            </button>
+        }
+        else if(state == 2)
+        {
+            <button class="ribbonBtn border-0 bg-white-color d-flex flex-column justify-content-center gap-2" @onclick='() => {navigationManager.NavigateTo("/dashboard");}'>
+                <img src="./images/criteria.png" width="30" height="30" />
+                Criteria
+            </button>
+            <button class="ribbonBtn border-0 bg-white-color d-flex flex-column justify-content-center gap-2" @onclick='() => {navigationManager.NavigateTo("/problem");}'>
+                <img src="./images/problem.png" width="30" height="30" />
+                Problem
+            </button>
+        }
+        <button class="ribbonBtn border-0 bg-white-color d-flex flex-column justify-content-center gap-2" @onclick='() => {navigationManager.NavigateTo("/new_options/new");}'>
+            <img src="./images/option.png" width="30" height="30" />
+            Options
+        </button>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public int state{ get; set; }
+}

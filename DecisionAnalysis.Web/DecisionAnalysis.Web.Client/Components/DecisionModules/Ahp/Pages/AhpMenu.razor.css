@@ -1,0 +1,20 @@
+﻿.active {
+    background-color: white !important
+}
+
+.brand {
+    left: 5px;
+}
+
+span > svg {
+    width: 17px !important;
+    height: 17px !important;
+}
+
+
+span.icon-small-size {
+    color: #307d91 !important
+}
+    span.icon-small-size:hover {
+        color: #ac6d3b !important
+    }

@@ -1,0 +1,48 @@
+﻿@page "/members"
+@using DecisionAnalysis.Web.Client.Components.DecisionModules.Ahp.Pages.Placeholder
+@rendermode InteractiveAuto
+<AhpMenu page="members" />
+<div class="w-100 h-100">
+@if(FirstState){
+    <MembersInput />
+}
+else {
+    <SfSplitter Height="100%" Width="100%">
+        <SplitterPanes>
+            <SplitterPane Size="@(barState ? "70%" : "100%")" Max="@(barState ? "70%" : "100%")" Min="0%">
+                <ContentTemplate>
+                    <div class="position-relative h-100" style="width: @(barState ? "100%" : "97%");">
+
+                        <MembersInput />
+                        <div class="@(barState ? "d-none" : "d-block") h-100 d-flex flex-row justify-content-center position-absolute top-0 h-100 d-flex double-border vertical-line-bar" style="right: -20px;" role="button" @onclick='() => barState = true'>
+                                <span class="icon-small"><i class="fa fa-solid fa-chevron-left"></i></span>
+                        </div>
+                        <div role="button" class="@(barState ? "d-none" : "d-block") @(leftTab == "options" ? "active" : "") position-absolute top-0 end-0 vertical-tab-header-btn" style="transform: translate(75%, 225%) rotate(90deg);" @onclick='() => {barState = true;leftTab = "criterias";}'>Options Analyzer</div>
+                    </div>
+                </ContentTemplate>
+            </SplitterPane>
+            <SplitterPane Size="@(barState ? "30%" : "0%")" Max="@(barState ? "30%" : "0%")" Min="0%">
+                <ContentTemplate>
+                    <div class="d-flex flex-row position-relative pe-3 h-100">
+                        <div class="h-100 d-flex flex-row justify-content-center double-border vertical-line-bar border-end-0" role="button" @onclick='() => barState = false'>
+                            <span class="icon-small"><i class="fa fa-solid fa-chevron-right"></i></span>
+                        </div>
+                        @if (leftTab == "options")
+                        {
+                            <OptionAnalyzer />
+                        }
+                        <div role="button" class="@(leftTab == "criterias" ? "active" : "") position-absolute top-0 end-0 vertical-tab-header-btn" style="transform: translate(43%, 225%) rotate(90deg);" @onclick='() => {leftTab = "options";}'>Options Analyzer</div>
+                    </div>
+                </ContentTemplate>
+            </SplitterPane>
+        </SplitterPanes>
+    </SfSplitter>
+}
+</div>
+
+@code {
+    private int Count = 0;
+    private bool FirstState = false;
+    private bool barState = true;
+    private string leftTab = "options";
+}

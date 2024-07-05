@@ -1,0 +1,23 @@
+﻿@inject NavigationManager navigationManager;
+<div class="vh-100 pt-4 d-flex flex-column gap-1 sidebar">
+    <div role="button" class="@(_selectItem == 1 ? "active" : "") text-center py-2 sidebar-item font-11-color" @onclick="() => {_selectItem = 1;}">
+        <b>Car1</b>
+    </div>
+    <div role="button" class="@(_selectItem == 2 ? "active" : "") text-center py-2 sidebar-item font-11-color" @onclick="() => {_selectItem = 2;}">
+        <b>Car2</b>
+    </div>
+    <div class="text-center py-4">
+        <button class="p-2 px-4 rounded-1 btn-primary primary-button" @onclick='() => {navigationManager.NavigateTo("new_options/add");}'>Add New Option</button>
+    </div>
+</div>
+
+@code {
+    private int _selectItem = 1;
+    [Parameter]
+    public int Type{ get; set; }
+    protected override void OnInitialized()
+    {
+        if (Type == 0)
+            _selectItem = 0;
+    }
+}

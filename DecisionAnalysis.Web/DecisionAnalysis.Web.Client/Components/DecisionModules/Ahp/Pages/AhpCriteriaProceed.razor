@@ -1,0 +1,241 @@
+﻿@page "/criteria_proceed"
+@using DecisionAnalysis.Web.Client.Components.DecisionModules.Ahp.Pages.Placeholder
+@rendermode InteractiveAuto
+@inject NavigationManager navigationManager;
+
+<AhpMenu page="add-another-criteria" />
+<div class="w-100 mt-4 px-4 position-relative panel-outer">
+    <div class="@(_modalState ? "d-block" : "d-none") position-absolute modal-container analyze-modal">
+        <div class="w-100 py-2 d-flex flex-row justify-content-center position-relative modal-header">
+            <b>One way sensitivity analysis</b>
+            <span role="button" class="position-absolute top-1 end-1 d-flex justify-content-center align-items-center icon-normal" @onclick="() => _modalState = false"><i class="fa fa-window-close"></i></span>
+        </div>
+        
+        <div class="py-1 px-2 w-100">
+            <p><span>Current @(_leftName)/@(_rightName) Ratio: </span> @(_left)/@(_right)</p>
+            <p><span>Decision Change Sensitivity: </span> 0%</p>
+        </div>
+    </div>
+    <div class="@(_matrixModalState ? "d-block" : "d-none") position-absolute modal-container matrix-modal">
+        <div class="w-100 py-2 d-flex flex-row justify-content-center position-relative modal-header">
+            <b>Set your relative preference</b>
+            <span role="button" class="position-absolute top-1 end-1 d-flex justify-content-center align-items-center icon-normal" @onclick="() => _matrixModalState = false"><i class="fa fa-window-close"></i></span>
+        </div>
+        <Judge OnModal="@modalShow" OnAction="@chartValues" Width=320 Step=20 HandShow="false" />
+    </div>
+    <div class="border border-1 panel-shadow panel-inner-border-color panel-inner">
+        <SfSplitter Height="100%" Width="100%">
+            <SplitterPanes>
+                <SplitterPane Size="@(_barState ? "70%" : "100%")" Max="@(_barState ? "70%" : "100%")" Min="0%">
+                    <ContentTemplate>
+                        <div class="position-relative h-100" style="width: @(_barState ? "100%" : "95%")">
+                            <div style="height: 80%">
+                                @if (_nextStep == false)
+                                {
+                                    <SfSplitter Height="100%" Width="100%">
+                                        <SplitterPanes>
+                                            <SplitterPane Size="@(_barSState ? "60%" : "100%")" Max="60%" Min="60%">
+                                                <ContentTemplate>
+                                                    <div class="position-relative h-100 d-flex flex-column position-relative" style="width: @(_barSState ? "100%" : "97%")">
+                                                        <div class="p-3 header-panel">
+                                                            <b>As you have more than one criterion, please set your preference between these criteria.</b>
+                                                        </div>
+                                                        <div class="form-check py-3 ms-4 checkbox-big" @onclick="() => _matrixState = !_matrixState">
+                                                            <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+                                                            <label class="form-check-label" for="flexCheckDefault">
+                                                                Matrix View
+                                                            </label>
+                                                        </div>
+                                                        <div class="w-100 d-flex flex-column justify-content-center gap-4">
+                                                            @if (_matrixState == false)
+                                                            {
+                                                                <InputPagination />
+                                                                <div class="d-flex justify-content-center mb-5" style="overflow: auto">
+                                                                    <Judge OnModal="@modalShow" OnAction="@chartValues" Width=320 Step=20 />
+                                                                </div>
+                                                            }
+                                                            else
+                                                            {
+                                                                <div style="overflow: auto; min-height: 300px">
+                                                                    <MatrixTable Items="@_matrixItems" Values="@_matrixValues" OpenModal="@openModal" />
+                                                                </div>
+                                                            }
+                                                        </div>
+                                                        <div class="d-flex justify-content-between align-items-center position-absolute bottom-0 w-100">
+                                                            <div class="form-check py-3 ms-4 checkbox-big">
+                                                                <input class="form-check-input" type="checkbox" value="" id="enforce">
+                                                                <label class="form-check-label" for="enforce">
+                                                                    Enforce Transitivity Rule
+                                                                </label>
+                                                            </div>
+                                                            <span class="d-flex align-items-center pe-3 info-muted">
+                                                                Consistency Ratio
+                                                                <span role="button" style="margin-left: 5px" class="d-flex align-items-center justify-content-center circle info-icon icon-small" @onfocusout='() => {_consistentState = false; StateHasChanged();}' @onclick='() => _consistentState = !_consistentState'><i class="fa fa-solid fa-info"></i></span>
+                                                            </span>
+                                                        </div>
+                                                        <div class="@(_consistentState ? "d-block" : "d-none") p-3 position-absolute modal-container info-modal" @onclick='() => _consistentState = true'>
+                                                            <p class="text-center pb-2 font-black-color"><b>Consistency Ratio</b></p>
+                                                            <p class="modal-content-paragraph">Suppose you like an apple twice as much as an orange and an orange 3 times as much as a banana. Logically, you should like an apple 6 times as much as a banana, If your preference between an 'apple' and a 'banana' does not reflect that proportion, then you are said to be inconsistent in your preferences.</p>
+                                                            <br />
+                                                            <p class="modal-content-paragraph ">Consistency ratio measures such inconsistency. It is a measurement that indicates how much you violate the transitivity rule. Naturally, when the transitivity rule is enforced, or when you are 100% consistent in your preferences, the deviation will be 0. The higher is this number, the more inconsistent you are.</p>
+                                                            <br />
+                                                            <p class="modal-content-footer">According to Thomas L. Saaty, the inventor,architect, and primary theorefician of the Analytic Hierachy Process, the consistency ratio should be less or equal to 0.1</p>
+                                                        </div>
+                                                        <div class="@(_barSState ? "d-none" : "d-block") h-100 d-flex flex-row justify-content-center position-absolute top-0 h-100 d-flex vertical-line-bar" style="right: -29px;" role="button" @onclick='() => _barSState = true'>
+                                                            <span class="icon-small"><i class="fa fa-solid fa-chevron-left"></i></span>
+                                                        </div>
+                                                    </div>
+                                                </ContentTemplate>
+                                            </SplitterPane>
+                                            <SplitterPane Size="@(_barSState ? "40%" : "0%")" Max="40%" Min="40%">
+                                                <ContentTemplate>
+                                                    <div class="d-flex flex-row position-relative pe-3 h-100 w-100">
+                                                        <div class="h-100 d-flex flex-row justify-content-center vertical-line-bar" role="button" @onclick='() => _barSState = false'>
+                                                            <span class="icon-small"><i class="fa fa-solid fa-chevron-right"></i></span>
+                                                        </div>
+                                                        <div class="w-100 d-flex flex-row justify-content-center">
+                                                            <div class="d-flex align-items-center flex-column justify-content-center">
+                                                                <div class="control-container">
+                                                                    <SfCarousel>
+                                                                        <CarouselItem>
+                                                                            <AhpChart @key="_index" Title="Priorities" Items="@_items" Values="@_values" type="bar" />
+                                                                        </CarouselItem>
+                                                                        <CarouselItem>
+                                                                            <AhpChart @key="_index" Title="Priorities" Items="@_items" Values="@_values" type="circle" />
+                                                                        </CarouselItem>
+                                                                        <CarouselItem>
+                                                                            <AhpChart @key="_index" Title="Priorities" Items="@_items" Values="@_values" type="polar" />
+                                                                        </CarouselItem>
+                                                                    </SfCarousel>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </ContentTemplate>
+                                            </SplitterPane>
+                                        </SplitterPanes>
+                                    </SfSplitter>
+                                }
+                                else
+                                {
+                                    <AhpEvalute getEnjoyValue=@getEnjoyValue />
+                                }
+                            </div>
+                            <div style="height: 20%" class="d-flex justify-content-center align-items-center bg-gray-color">
+                                @if (_nextStep)
+                                {
+                                    <button class="btn-primary py-3 px-4 primary-button" @onclick='() => navigationManager.NavigateTo("dashboard")'>Finish</button>
+                                }
+                                else
+                                {
+                                    <button class="btn-primary py-3 px-4 primary-button" @onclick='() => _nextStep = true'>Proceed</button>
+                                }
+                            </div>
+                            <div class="@(_barState ? "d-none" : "d-block") h-100 d-flex flex-row justify-content-center position-absolute top-0 h-100 d-flex vertical-line-bar double-border" style="right: -30px;" role="button" @onclick="() => _barState = true">
+                                <span class="icon-small"><i class="fa fa-solid fa-chevron-left"></i></span>
+                            </div>
+                            <div role="button" class="@(_barState ? "d-none" : "d-block") @(_leftTab == "options" ? "active" : "") position-absolute top-0 end-0 vertical-tab-header-btn" style="transform: translate(76%, 225%) rotate(90deg);" @onclick='() => {_barState = true;_leftTab = "criterias";}'>Already Added Criteria</div>
+                        </div>
+                    </ContentTemplate>
+                </SplitterPane>
+                <SplitterPane Size="@(_barState ? "30%" : "0%")" Max="@(_barState ? "30%" : "0%")" Min="0%">
+                    <ContentTemplate>
+                        <div class="d-flex flex-row position-relative pe-3 h-100">
+                            <div class="h-100 d-flex flex-row justify-content-center double-border vertical-line-bar border-end-0" role="button" @onclick="() => _barState = false">
+                                <span class="icon-small"><i class="fa fa-solid fa-chevron-right"></i></span>
+                            </div>
+                            <div class="pe-1 vertical-tab-content-container">
+                                @if (_leftTab == "criterias")
+                                {
+                                    <div class="h-100 double-border border-start-0">
+                                        <p class="font-10-color text-center pt-3">Identified criteria</p>
+                                        <Tree />
+                                    </div>
+                                }
+                            </div>
+                            <div role="button" class="@(_leftTab == "criterias" ? "active" : "") position-absolute top-0 end-0 vertical-tab-header-btn" style="transform: translate(43%, 225%) rotate(90deg);" @onclick='() => _leftTab = "criterias"'>Already Added Criteria</div>
+                        </div>
+                    </ContentTemplate>
+                </SplitterPane>
+            </SplitterPanes>
+        </SfSplitter>
+    </div>
+</div>
+<style>
+    .control-container {
+        background-color: #adb5bd;
+        height: 390px;
+        margin: 0 auto;
+        width: 330px;
+    }
+
+    .e-carousel .slide-content {
+        align-items: center;
+        display: flex;
+        height: 100%;
+        justify-content: center;
+    }
+</style>
+
+@code {
+    private bool _barState = true;
+    private bool _barSState = true;
+    private bool _matrixState;
+    private string _leftTab = "criterias";
+    private bool _nextStep;
+    private bool _consistentState;
+
+    private List<string> _matrixItems =
+    [
+        "abc",
+        "def"
+    ];
+    private List<List<double>> _matrixValues =
+    [
+        [1, 0.3],
+        [0.5, 1]
+    ];
+
+    private List<string> _items = ["abc", "def"];
+    private List<double> _values = [0.3, 1];
+
+    private int _left = 1;
+    private int _right = 1;
+    private string _leftName;
+    private string _rightName;
+    private int _index;
+    private bool _modalState;
+    private bool _matrixModalState;
+
+    private void chartValues(int left, int right)
+    {
+        _left = left;
+        _right = right;
+        var numL = 100.0 / (left + right) * left;
+        var numR = 100.0 / (left + right) * right;
+        _values[0] = numL;
+        _values[1] = numR;
+        _index++;
+        StateHasChanged();
+    }
+    private void modalShow(string leftName, string rightName)
+    {
+        _leftName = leftName;
+        _rightName = rightName;
+        _modalState = true;
+        StateHasChanged();
+    }
+    private void getEnjoyValue(double value)
+    {
+
+    }
+    private void openModal()
+    {
+        _matrixModalState = true;
+        StateHasChanged();
+    }
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+    }
+}

@@ -1,0 +1,39 @@
+﻿@page "/carousel"
+@rendermode InteractiveAuto
+
+    <div class="control-container">
+        <SfCarousel>
+            <CarouselItem>
+                <AhpChart Title="Priorities" Items="@Items" Values="@Values" type="bar"/>
+            </CarouselItem>
+            <CarouselItem>
+                <AhpChart Title="Priorities" Items="@Items" Values="@Values" type="circle"/>
+            </CarouselItem>
+            <CarouselItem>
+                <AhpChart Title="Priorities" Items="@Items" Values="@Values" type="polar" />
+            </CarouselItem>
+        </SfCarousel>
+    </div>
+
+<style>
+    .control-container {
+        background-color: white;
+        height: 100%;
+        margin: 0 auto;
+        width: 330px;
+    }
+
+    .e-carousel .slide-content {
+        align-items: center;
+        display: flex;
+        font-size: 1.25rem;
+        height: 100%;
+        justify-content: center;
+    }
+    
+</style>
+
+@code {
+    private List<string> Items = ["abc", "def", "ghi"];
+    private List<double> Values = [0.3, 1, 0.6];
+}

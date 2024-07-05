@@ -1,0 +1,27 @@
+﻿@page "/"
+@using FrameworkUtilities.ConfigNames
+@rendermode InteractiveAuto
+@inject IConfiguration Configuration
+
+<PageTitle>Home</PageTitle>
+
+<h1>Hello, world!</h1>
+
+Welcome to your new app. Render State: @_renderState
+
+<DynamicSmiley Width="48px" Happiness="HappinessValue" FaceColor="lightgreen" StrokeColor="green" />
+<input type="range" min="0" max="100" step="1" @bind-value="@HappinessValue" @oninput="e => { HappinessValue =  int.Parse(e.Value?.ToString() ?? string.Empty); StateHasChanged();}" />
+<DropDownMenu DropDownLabel="Services" Items="_linkItems" />
+@code
+{
+    private int HappinessValue { get; set; } = 50;
+
+    private string _renderState = "";
+
+    readonly List<DropDownMenu.HyperlinkItem> _linkItems = [new("Wedding", "https://spicelogic.com"), new("Real Estate", "https://spicyvision.com/real-estate")];
+
+    protected override async Task OnInitializedAsync()
+    {
+        _renderState = Configuration[AppSettingNames.RenderState] ?? "";
+    }
+}

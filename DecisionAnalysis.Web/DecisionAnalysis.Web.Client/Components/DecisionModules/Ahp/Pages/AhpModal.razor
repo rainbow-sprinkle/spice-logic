@@ -1,0 +1,27 @@
+﻿<div class="position-absolute modal-fullscreen modal-background"></div>
+<div class="border modal-base border-1" style="border-color: black;">
+    <div class="header bg-9-color text-center py-2 font-white-color" >
+        @title
+    </div>
+    <div class="bg-white-color">
+        @ChildContent
+    </div>
+    <div class="footer bg-8-color d-flex flex-row justify-content-end gap-3 p-2">
+        <button class="btn-primary py-2 px-3 primary-button" @onclick="onSubmit">Ok</button>
+        <button class="btn-primary py-2 px-3 secondary-button" @onclick="onClose">Cancel</button>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public string title { get; set; }
+
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+    [Parameter]
+    public EventCallback onClose { get; set; }
+
+    [Parameter]
+    public EventCallback onSubmit { get; set; }
+}

@@ -1,0 +1,166 @@
+﻿@using BusinessDomain.Contracts
+@using DecisionAnalysis.Web.Client.Components.Organization.Pages
+@implements IDisposable
+@inject IPaymentProcessor PaymentProcessor
+@inject NavigationManager NavigationManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+<div class="sidebar">
+    <div class="top-row ps-3 navbar navbar-dark">
+        <div class="container-fluid ps-0">
+            <a class="navbar-brand sidebar-title m-0" href="">SpiceLogic Rational Will</a>
+        </div>
+    </div>
+    <div class="nav-scrollable">
+        <nav class="flex-column">
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="ahp" Match="NavLinkMatch.All">
+                    <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span>
+                    <span class="sidebar-title">Home</span>
+                </NavLink>
+            </div>
+
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="counter">
+                    <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span>
+                    <span class="sidebar-title">Counter</span>
+                </NavLink>
+            </div>
+
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="weather">
+                    <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span>
+                    <span class="sidebar-title">Weather</span>
+                </NavLink>
+            </div>
+
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="auth">
+                    <span class="bi bi-lock-nav-menu" aria-hidden="true"></span>
+                    <span class="sidebar-title">Auth Required</span>
+                </NavLink>
+            </div>
+
+            <div class="nav-item px-3 organ">
+                <NavLink class="nav-link" href="@Home.PageUrl">
+                    <span class="bi bi-lock-nav-menu" aria-hidden="true"></span>
+                    <span class="sidebar-title">Organization</span>
+                </NavLink>
+            </div>
+
+            <AuthorizeView>
+                <Authorized>
+                    <div class="nav-item px-3 user-info">
+                        <button class="sidebar-user" id="toggle-button">
+                            <span class="icon">
+                                <span>US</span>
+                            </span>
+                            <span>@context.User.Identity?.Name </span>
+                        </button>
+
+                        <button class="sidebar-question">
+                            <i class="fa fa-question"></i>
+                        </button>
+
+                        <button class="sidebar-question sidebar-alone">
+                            <i class="fa fa-question"></i>
+                        </button>
+
+                        <div class="setting-modal shadow" id="side-user-setting">
+                            <div class="modal-item">
+                                <button type="button" class="general-color flex-row item-center" onclick="createCustomerPortalSession()"><i class="fa-solid fa-box-open icon-normal-size"></i> <span>Manage Billing and Subscription</span> </button>
+                            </div>
+                            <div class="modal-item">
+                                <a class="general-color flex-row item-center" href="Account/Manage"><i class="fa fa-gear icon-normal-size"></i> <span>Account Settings</span></a>
+                            </div>
+                            <div class="modal-item">
+                                <form action="Account/Logout" method="post">
+                                    <AntiforgeryToken />
+                                    <input type="hidden" name="ReturnUrl" value="@_currentUrl" />
+                                    <button type="submit" class="logout-btn general-color flex-row item-center">
+                                        <i class="fa fa-sign-out icon-normal-size" /> <span>Logout</span>
+                                    </button>
+                                </form>
+
+                            </div>
+                        </div>
+                    </div>
+                </Authorized>
+                <NotAuthorized>
+                    <div class="nav-item px-3">
+                        <NavLink class="nav-link" href="Account/Register">
+                            <span class="bi bi-person-nav-menu" aria-hidden="true"></span>
+                            <span class="sidebar-title">Register</span>
+                        </NavLink>
+                    </div>
+                    <div class="nav-item px-3">
+                        <NavLink class="nav-link" href="Account/Login">
+                            <span class="bi bi-person-badge-nav-menu" aria-hidden="true"></span>
+                            <span class="sidebar-title">Login</span>
+                        </NavLink>
+                    </div>
+                </NotAuthorized>
+            </AuthorizeView>
+            <div class="collapse-btn" onclick="toggleSidebarElements()">
+                <i class="fa-solid fa-chevron-right right-icon"></i>
+                <i class="fa-solid fa-chevron-left left-icon"></i>
+            </div>
+        </nav>
+    </div>
+</div>
+
+<ScriptContent>
+    <script>
+        function toggleSidebarElements() {
+
+            const isSidebarHidden = $('.sidebar-title').first().is(':hidden');
+
+            const displaySettingsMap = {
+                '.sidebar-title': isSidebarHidden ? 'inline' : 'none',
+                '.sidebar-user': isSidebarHidden ? 'flex' : 'none',
+                '.sidebar-question': isSidebarHidden ? 'block' : 'none',
+                '.sidebar-alone': isSidebarHidden ? 'none' : 'block',
+                '.left-icon': isSidebarHidden ? 'block' : 'none',
+                '.right-icon': isSidebarHidden ? 'none' : 'block',
+            };
+
+            $.each(displaySettingsMap, (selector, displayStyle) => {
+                $(selector).css('display', displayStyle);
+            });
+        }
+
+        const sidebarToggleButton = $('#toggle-button');
+        const sidebarModal = $('#side-user-setting');
+
+        sidebarToggleButton.click(() => sidebarModal.toggle());
+
+        $(document).click((event) => {
+            if (!sidebarToggleButton.is(event.target) && !sidebarToggleButton.has(event.target).length) {
+                sidebarModal.hide();
+            }
+        });
+    </script>
+</ScriptContent>
+
+@code {
+
+    private string? _currentUrl;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _currentUrl = NavigationManager.ToBaseRelativePath(NavigationManager.Uri);
+        NavigationManager.LocationChanged += OnLocationChanged;
+    }
+
+    private void OnLocationChanged(object? sender, LocationChangedEventArgs e)
+    {
+        _currentUrl = NavigationManager.ToBaseRelativePath(e.Location);
+        StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+        NavigationManager.LocationChanged -= OnLocationChanged;
+    }
+}
+

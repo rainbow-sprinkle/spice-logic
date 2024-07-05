@@ -1,0 +1,91 @@
+﻿
+@mixin modal-base {
+    pointer-events: auto;
+    box-sizing: border-box;
+    color: $color-1;
+    background-color: $background-color-1;
+    border-radius: 12px;
+    box-shadow: 0px 0px 10px 3px rgba(2, 49, 137, 0.06);
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 40vw;
+    flex-direction: column;
+    z-index: 100;
+}
+
+.modal-base {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 40vw;
+    z-index: 100;
+}
+
+.modal-none {
+    display: none;
+}
+
+.modal-background {
+    top: 0px;
+    left: 0px;
+    background: #a7a6a6;
+    opacity: 0.8;
+    z-index: 99;
+}
+
+.modal-board {
+    @include modal-base;
+}
+
+.modal-title {
+    padding: 32px 40px;
+    width: 100%;
+    box-sizing: border-box;
+    color: $color-1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.modal-title-container {
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 20px;
+}
+
+.modal-content {
+    padding: 32px 40px 30px;
+}
+
+.modal-bottom-btns {
+    gap: 10px;
+}
+
+// Modal close button
+.modal-close {
+    right: 0px;
+    top: 0px;
+    cursor: pointer;
+}
+
+.modal-content-gray-background {
+    background-color: $background-color-2;
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+    .modal-board {
+        width: 80vw;
+        max-width: 500px;
+    }
+
+    .modal-title {
+        padding: 24px 30px;
+    }
+
+    .modal-content {
+        padding: 24px 30px 20px;
+    }
+}

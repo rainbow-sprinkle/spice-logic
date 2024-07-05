@@ -1,0 +1,27 @@
+﻿ul,li {
+    list-style-type: disc
+}
+.evalute-modal {
+    width: 1000px;
+    height: 550px;
+    transform: translate(-50%,-50%);
+    top: 50%;
+    left: 50%
+}
+.active {
+    background-color: white;
+    border-bottom: 1px solid black;
+    border-top: 1px solid black;
+    border-left: 1px solid black;
+    border-right: 1px solid white;
+}
+span.icon {
+    width: 8px !important;
+    height: 8px !important
+}
+
+.analyze-modal {
+    bottom: 58%;
+    right: 24%;
+    width: 50%;
+}

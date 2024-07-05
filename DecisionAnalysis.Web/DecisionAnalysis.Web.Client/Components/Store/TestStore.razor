@@ -1,0 +1,94 @@
+﻿@page "/teststore"
+@using DecisionAnalysis.Web.Client.UiUtilities
+@using Microsoft.AspNetCore.Authorization
+@using BusinessDomain.BusinessLogic.Payment
+@rendermode InteractiveWebAssembly
+@attribute [Authorize]
+
+@inject HttpClient HttpClient
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject NavigationManager NavigationManager
+@inject IBlazorJsFacade JsFacade
+@inject ISiteUtils SiteUtils
+ 
+<h1>Store</h1>
+<div>Customer: @_customerEmail</div>
+
+<h2 class="my-3">@ProductName</h2>
+<p class="my-5">@Description</p>
+
+<img alt="Product Box shot" src="@_productImageUrl" />
+
+<p>Price: <span>@UnitPrice</span> x <span>@Quantity</span> = @Math.Round(Quantity * UnitPrice) @Currency</p>
+@if(_isBusy)
+{
+    <p>Creating session, Please wait...</p>
+}
+else
+{
+    <button type="button" @onclick="BuySubscription">Buy Now</button>
+}
+
+@code {
+
+    private const string Currency = "usd";
+    private const string ProductName = "Analytic Hierarchy Process";
+    private const string Description = "Business subscription with 5 users, monthly subscription";
+    private const decimal UnitPrice = 25;
+    private const int Quantity = 5;
+    private string _productImageUrl = "";
+    private string _customerEmail = "";
+    private bool _isBusy;
+    private string _hostAddress = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        _hostAddress = NavigationManager.BaseUri.TrimEnd('/');
+
+        AuthenticationState authenticationState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        _customerEmail = authenticationState.User.Identity?.Name ?? string.Empty; //todo: Check database for stripe customer id, if exists, use that.
+        _productImageUrl = "https://spicelogicstorage.blob.core.windows.net/product/ahpsoftware/boxshot_homePage.png"; // $"{_hostAddress}/images/ahp-box-shot.png";
+    }
+
+    private async Task BuySubscription()
+    {
+        if (SiteUtils.IsWasmLoaded())
+        {
+            _isBusy = true;
+
+            const string relativeUrl = "/api/payment/checkout";
+            string absoluteUrl = $"{_hostAddress}{relativeUrl}";
+
+            PaymentInstruction requestContent = new PaymentInstruction
+            {
+                ProductName = ProductName, 
+                Description = Description,
+                UnitPrice = UnitPrice,
+                Quantity = Quantity,
+                ImageUrl = _productImageUrl,
+                Currency = Currency,
+                CustomerEmail = _customerEmail,
+                BaseUrl = _hostAddress
+            };
+
+            HttpResponseMessage response = await HttpClient.PostAsJsonAsync(absoluteUrl, requestContent);
+        
+            if(!response.IsSuccessStatusCode)
+            {
+                _isBusy = false;
+            
+                await JsFacade.ShowAlert($"{response.StatusCode} : {response}");
+            }
+            else
+            {
+                string checkoutUrl = await response.Content.ReadAsStringAsync();
+
+                await JsFacade.NavigateToUrl(checkoutUrl);
+            }
+        }
+        else
+        {
+            await JsFacade.ShowAlert("For some reason, the site is not fully loaded. Please refresh the page and try again!");
+        }
+    }
+}

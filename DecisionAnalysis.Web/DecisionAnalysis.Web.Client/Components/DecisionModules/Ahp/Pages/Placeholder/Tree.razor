@@ -1,0 +1,111 @@
+﻿@page "/tree"
+@using DecisionAnalysis.Web.Client.Components.Service
+@rendermode InteractiveAuto
+@inject AhpStateContainerService ahpStateService;
+@inject NavigationManager navigationManager;
+
+<div id="treeview" class="pt-3">
+    <SfTreeView TValue="CriteriaData" @ref="tree" AllowDragAndDrop="true" @bind-SelectedNodes="@selectedNodes" @bind-ExpandedNodes="expandedNodes">
+        <TreeViewFieldsSettings Id="Id" ParentID="Pid" DataSource="@ahpStateService.TreeDatas" Text="Name" HasChildren="HasChild"></TreeViewFieldsSettings>
+        <TreeViewEvents TValue="CriteriaData" NodeSelected="OnSelect" NodeClicked="nodeClicked"></TreeViewEvents>
+        <SfContextMenu TValue="MenuItem" @ref="menu" Target="#treeview" Items="@MenuItems">
+            <MenuEvents TValue="MenuItem" ItemSelected="MenuSelect"></MenuEvents>
+        </SfContextMenu>
+    </SfTreeView>
+</div>
+
+@code
+{
+    // Reference for treeview
+    SfTreeView<CriteriaData> tree;
+
+    // Reference for context menu
+    SfContextMenu<MenuItem> menu;
+    string selectedId;
+    string selectedName;
+    public string[] selectedNodes = Array.Empty<string>();
+    public string[] expandedNodes = [];
+    int index = 100;
+
+    // Datasource for menu items
+    public List<MenuItem> MenuItems =
+    [
+        new MenuItem { Text = "Edit" },
+        new MenuItem { Text = "Remove" },
+        new MenuItem { Text = "Add" }
+    ];
+
+    public class CriteriaData
+    {
+        public string Id { get; set; }
+        public string Name { get; set; }
+        public string Pid { get; set; }
+        public bool HasChild { get; set; }
+    }
+
+    // Triggers when TreeView Node is selected
+    public void OnSelect(NodeSelectEventArgs args)
+    {
+        selectedId = args.NodeData.Id;
+    }
+
+    // Triggers when TreeView node is clicked
+    public void nodeClicked(NodeClickEventArgs args)
+    {
+        selectedId = args.NodeData.Id;
+        selectedName = args.NodeData.Text;
+        selectedNodes = [args.NodeData.Id];
+    }
+
+    // To add a new node
+    async Task AddNodes()
+    {
+
+        // Expand the selected nodes
+        expandedNodes = [selectedId];
+
+        index = index + 1;
+
+        navigationManager.NavigateTo("/ahp_add_another_criteria/child/" + selectedId + "/" + selectedName);
+
+    }
+
+    // To delete a tree node
+    void RemoveNodes()
+    {
+        List<CriteriaData> removeNode = tree.GetTreeData(selectedId);
+        ahpStateService.TreeDatas.Remove(removeNode.ElementAt(0));
+    }
+
+    // To edit a tree node
+    async Task RenameNodes()
+    {
+        await tree.BeginEditAsync(selectedId);
+    }
+
+    // Triggers when context menu is selected
+    public async Task MenuSelect(MenuEventArgs<MenuItem> args)
+    {
+        string selectedText;
+        selectedText = args.Item.Text;
+        if (selectedText == "Edit")
+        {
+            await RenameNodes();
+        }
+        else if (selectedText == "Remove")
+        {
+            RemoveNodes();
+        }
+        else if (selectedText == "Add")
+        {
+            await AddNodes();
+        }
+    }
+
+    protected override void OnInitialized()
+    {
+        selectedNodes = ["2"];
+        base.OnInitialized();
+    }
+}
+

@@ -1,0 +1,67 @@
+﻿@import "theme";
+@import "mixins";
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
+@import "tables";
+@import "utilties";
+@import "modal";
+@import "blazor";
+@import "syncFusionCustomization";
+
+// Base styles
+* {
+    box-sizing: border-box;
+}
+
+html, body {
+    font-family: $fonts-InterVariable;
+}
+
+// Typography
+$default-font-size: 14px;
+$default-font-color: $color-1;
+$default-line-height: 1.14;
+$default-font-weight: 600;
+
+@mixin typography($size, $weight: $default-font-weight) {
+    font-size: $size;
+    color: $default-font-color;
+    line-height: $default-line-height;
+    font-weight: $weight;
+    margin: 0;
+}
+
+h1 {
+    @include typography(28px);
+}
+
+h2 {
+    @include typography(22px);
+}
+
+h3, p {
+    @include typography($default-font-size, 400);
+}
+
+// Links
+a, .btn-link {
+    color: #006bb7;
+    text-decoration: none;
+}
+
+// List styles
+ul, li {
+    list-style: none;
+}
+
+// Button styles
+button {
+    border: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+// Article styles
+article {
+    padding-left: 0;
+}
